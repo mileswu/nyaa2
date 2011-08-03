@@ -14,6 +14,7 @@
   +> Would make it easier to find eps
   -> How to do it automatically without making mistakes? Or manually without making it a hassle for the uploader?
   *  Perhaps use anidb series listing + autocomplete? Weight for newer series as they are more likely.
+  *  Various sort methods (exhaustive better than not enough) video codec, audio codec, subtitle format (could grab this info if taking screenshots?)
 
 - Screenshots
   *  Automatic: Downloads torrent, uses mplayer to get screenshots
@@ -21,6 +22,7 @@
   +> Allows people to see what they are DLing
   -> NSFW/non-legal concerns
   -> Uses bandwidth and space (could be mitigated through tinypic)
+  -> Would take time, especially if there were slow seeders
 
 - More reliable. Less downtime. Less bugs.
 
@@ -31,9 +33,12 @@
 - Cool features
 
 - Some kind of IRC integration perhaps?
+  *  a bot that announces torrent adds and can also dcc send the .torrent (upon request)
+    -> dcc send may be a bit unrealistic if a lot of files are being added
 
 - Add specific support for DDL links
   +> Attracts users who don't use torrents
+    *  Also attracts people who make money by posting ddl links?
   -> Perhaps needs checking for dead links
 
 - Autosource everything listed on TokyoTosho
@@ -44,3 +49,4 @@
   +> Saves time for fansub uploaders
   +> Fansub uploaders won't feel like here won't have as wide a reach
   -> Allows users to still use TT and Nyaa
+    *  Just make it so awesome they won't WANT to
