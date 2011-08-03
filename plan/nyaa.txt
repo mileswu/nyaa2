@@ -1,0 +1,46 @@
+###########################################################
+# Nyaa2 Project Documentation: How to be better than Nyaa #
+###########################################################
+
+- Automatic instant refresh
+  *  HTML Push perhaps via WebSockets
+  +> As fresh as possible. No need to refresh
+
+- Notification / Filters?
+  +> Users can find the shows they want faster
+
+- Series grouping
+  *  Could group by group/ep too
+  +> Would make it easier to find eps
+  -> How to do it automatically without making mistakes? Or manually without making it a hassle for the uploader?
+  *  Perhaps use anidb series listing + autocomplete? Weight for newer series as they are more likely.
+
+- Screenshots
+  *  Automatic: Downloads torrent, uses mplayer to get screenshots
+  *  Manual upload
+  +> Allows people to see what they are DLing
+  -> NSFW/non-legal concerns
+  -> Uses bandwidth and space (could be mitigated through tinypic)
+
+- More reliable. Less downtime. Less bugs.
+
+- Easier/faster to use
+
+- Provide more flexible listing pages and controls for fansub uploaders
+
+- Cool features
+
+- Some kind of IRC integration perhaps?
+
+- Add specific support for DDL links
+  +> Attracts users who don't use torrents
+  -> Perhaps needs checking for dead links
+
+- Autosource everything listed on TokyoTosho
+  +> More content
+  -> Lowers SnR
+
+- Automatically crosslist onto TokyoTosho and Nyaa
+  +> Saves time for fansub uploaders
+  +> Fansub uploaders won't feel like here won't have as wide a reach
+  -> Allows users to still use TT and Nyaa

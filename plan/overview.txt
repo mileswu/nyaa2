@@ -1,0 +1,23 @@
+#########################################
+# Nyaa2 Project Documentation: Overview #
+#########################################
+
+## Software being used
+- Programming Language: Javascript (using Node.JS V8 and Coffescript)
+- Framework: ExpressJS
+- Templating: Jade (HTML) and Stylus (CSS)
+- Database: MongoDB (via Mongoose ORM library), maybe Redis too
+
+## Project terms
+- Everything must go through git
+- All code will be MIT licensed
+
+## Technical requirements
+- Be compatible with Chrome and Firefox 4. IE/Opera/Safari would be a plus but not a requirement.
+- Modularity for plugins
+- Easily scalable
+
+## Project goals 
+- Provide a replacement for nyaa.eu (make it better)
+- Along the way, make a complete open-source application for those wishing to set up their own tracker
+- Potentially earn ad/donation revenue
