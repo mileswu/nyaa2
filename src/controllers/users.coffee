@@ -13,6 +13,8 @@ exports.login_post = (req, res) ->
       req.flash 'error', 'Invalid username or password.'
       res.redirect '/login'
     else
+      user.lastLogin = new Date
+      user.save()
       req.session.user = user
       res.redirect '/'
 
