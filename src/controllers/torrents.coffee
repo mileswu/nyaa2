@@ -52,10 +52,11 @@ exports.upload_post = (req, res) ->
           'title'    : title,
           'files'    : torrentFiles
         }
-        torrent.save (err) ->
-          fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
-            fs.unlink files.torrent.path, (err) ->
-              res.redirect '/'
+        torrent.generatePermalink (err) ->
+          torrent.save (err) ->
+            fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
+              fs.unlink files.torrent.path, (err) ->
+                res.redirect '/'
   else
     req.flash 'error', "There was an error with the upload form"
     res.redirect '/upload'

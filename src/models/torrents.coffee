@@ -20,14 +20,35 @@ Torrent = new Schema {
   uploader     : ObjectId,
   title        : String,
   size         : Number,
-  dateUploaded : Date,
+  dateUploaded : {type: Date, default: new Date},
   files        : [File],
   description  : String,
   comments     : [Comment],
-  infohash     : String
+  infohash     : {type: String, index: {unique:true}}
+  permalink    : {type: String, index: {unique:true}}
 }
 
+Torrent.method 'generatePermalink', (callback) ->
+  baseurl = @title.substring(0, 75)
+  # check for collisions
+  checkFunc = (base, endno) =>
+    if endno > 0
+      url = base + '-' + endno
+    else
+      url = base
+    (mongoose.model 'Torrent').findOne {'permalink' : url}, (err, doc) =>
+      if doc
+        checkFunc base, endno+1
+      else
+        @permalink = url
+        callback ''
+  checkFunc baseurl, 0
+  
+
+
+
 TorrentModel = mongoose.model 'Torrent', Torrent
+
 
 exports.Torrent = TorrentModel
 
