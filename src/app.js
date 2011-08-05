@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -7,6 +6,9 @@ var express = require('express');
 var form = require('connect-form');
 
 var app = module.exports = express.createServer();
+
+global.mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/nyaa2');
 
 // Configuration
 

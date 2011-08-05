@@ -4,12 +4,7 @@ generateHash = (str, alg) ->
   hash.update str
   alg + '-' + hash.digest 'hex'
 
-# Load Mongoose
-mongoose = require 'mongoose'
-mongoose.connect 'mongodb://localhost/nyaa2'
-
 Schema = mongoose.Schema
-ObjectId = Schema.ObjectId
 
 User = new Schema
   name:
