@@ -5,10 +5,15 @@ mongoose.connect 'mongodb://localhost/nyaa2'
 Schema = mongoose.Schema
 ObjectId = Schema.ObjectId
 
-Comments = new Schema {
+Comment = new Schema {
   body  : String,
   author: ObjectId,
   date  : Date
+}
+
+File = new Schema {
+  path  : String,
+  size  : Number
 }
 
 Torrent = new Schema {
@@ -16,9 +21,9 @@ Torrent = new Schema {
   title        : String,
   size         : Number,
   dateUploaded : Date,
-  fileList     : [String],
+  files        : [File],
   description  : String,
-  comments     : [Comments],
+  comments     : [Comment],
   infohash     : String
 }
 
