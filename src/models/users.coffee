@@ -14,7 +14,6 @@ ObjectId = Schema.ObjectId
 User = new Schema
   name:
     type: String
-    set: (v) -> @name_lc = v.toLowerCase(); v
     required: true
   name_lc:
     type: String
@@ -30,6 +29,10 @@ User = new Schema
     default: Date.now
   lastLogin:
     type: Date
+
+User.pre 'save', (next) ->
+  @name_lc = @name.toLowerCase()
+  next()
 
 User.method 'verifyPass', (test) ->
   alg = @pass.substr 0, @pass.indexOf '-'
