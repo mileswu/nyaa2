@@ -1,0 +1,16 @@
+h2 Upload a torrent
+
+form(id='upload-form', method='post', enctype='multipart/form-data')
+  ul
+    li
+      label(for='upload-file') File
+      input(type='file', name='torrent', id='upload-file')
+    li
+      label(for='upload-title') Title (optional)
+      input(name='title', id='upload-title')
+    li
+      label(for='upload-category') Category
+      select(id='upload-category')
+    li
+      input(type='submit', value='Upload', id='upload-submit')
+

@@ -18,7 +18,8 @@ Torrent = new Schema {
   dateUploaded : Date,
   fileList     : [String],
   description  : String,
-  comments    : [Comments]
+  comments     : [Comments],
+  infohash     : String
 }
 
 TorrentModel = mongoose.model 'Torrent', Torrent

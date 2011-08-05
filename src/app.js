@@ -4,6 +4,7 @@
  */
 require("coffee-script");
 var express = require('express');
+var form = require('connect-form');
 
 var app = module.exports = express.createServer();
 
@@ -14,6 +15,9 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+  app.use(express.cookieParser());
+  app.use(express.session({ secret: "keyboard cat" }));
+  app.use(form({keepExtensions: true}));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
@@ -29,10 +33,12 @@ app.configure('production', function(){
 // Load
 
 var torrents = require('./controllers/torrents');
-var userss = require('./controllers/users');
+var users = require('./controllers/users');
 
 // Routes
 app.get('/', torrents.list);
+app.get('/upload', torrents.upload);
+app.post('/upload', torrents.upload_post);
 
 
 

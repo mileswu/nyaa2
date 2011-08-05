@@ -2,8 +2,11 @@ h1 list
 p Welcome to list
 
 - if (torrents.length)
-  - each torrent in torrents
-    li= torrent.size
+  table
+    - each torrent in torrents
+      tr
+        td= torrent.title
+        td= torrent.size
 - else
   p there were no torrents
 
