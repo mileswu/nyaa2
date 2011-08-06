@@ -26,7 +26,7 @@ Torrent = new Schema {
 }
 
 Torrent.method 'generatePermalink', (callback) ->
-  baseurl = @title.substring(0, 75)
+  baseurl = @title.substring(0, 75).replace(' ', '_')
   # check for collisions
   checkFunc = (base, endno) =>
     if endno > 0
