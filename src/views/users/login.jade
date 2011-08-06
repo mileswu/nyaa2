@@ -1,0 +1,13 @@
+h1= title
+
+form#login-form(method='POST')
+  ul
+    li
+      label(for='login-username') User name:
+      input(type='text', name='username', id='login-username', value='')
+    li
+      label(for='login-password') Password:
+      input(type='password', name='password', id='login-password')
+    li
+      input(type='submit', value="Login")
+

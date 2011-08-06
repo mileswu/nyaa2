@@ -1,0 +1,19 @@
+h1= title
+
+form#registration-form(method='POST')
+  ul
+    li
+      label(for='register-username') User name:
+      input(type='text', name='username', id='register-username', value='')
+    li
+      label(for='register-password-1') Password:
+      input(type='password', name='password1', id='register-password-1')
+    li
+      label(for='register-password-2') Confirm Password:
+      input(type='password', name='password2', id='register-password-2')
+    li
+      label(for='register-email') (optional) Email:
+      input(type='text', name='email', id='register-email', value='')
+    li
+      input(type='submit', value="Register")
+
