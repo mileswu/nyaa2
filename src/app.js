@@ -39,7 +39,8 @@ var users = require('./controllers/users');
 app.get('/', torrents.list);
 app.get('/upload', torrents.upload);
 app.post('/upload', torrents.upload_post);
-
+app.get('/torrent/:permalink', torrents.show);
+app.get('/torrent/:permalink/download', torrents.download);
 
 
 app.listen(3000);

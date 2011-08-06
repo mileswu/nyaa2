@@ -5,8 +5,11 @@ p Welcome to list
   table
     - each torrent in torrents
       tr
-        td= torrent.title
+        td
+          a(href='/torrent/'+torrent.permalink)= torrent.title
         td= torrent.size
+        td
+          a(href='/torrent/'+torrent.permalink+'/download') DL
 - else
   p there were no torrents
 

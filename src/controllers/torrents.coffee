@@ -50,7 +50,8 @@ exports.upload_post = (req, res) ->
           'infohash' : infohash,
           'size'     : size,
           'title'    : title,
-          'files'    : torrentFiles
+          'files'    : torrentFiles,
+          'description' : fields.description
         }
         torrent.generatePermalink (err) ->
           torrent.save (err) ->
@@ -60,5 +61,42 @@ exports.upload_post = (req, res) ->
   else
     req.flash 'error', "There was an error with the upload form"
     res.redirect '/upload'
- 
+
+exports.download = (req, res) ->
+  Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
+    if doc
+      infohash = doc.infohash
+      fs.readFile (__dirname+'/../../torrents/' + infohash + '.torrent'), (err, data) ->
+        if err
+          console.log err
+          res.send 'There was an error', 500
+        else
+          torrentInfo = bencode.bdecode data
+          if torrentInfo['announce-list']
+            delete torrentInfo['announce-list']
+          torrentInfo.announce = 'mahtracker'
+          
+          output = bencode.bencode torrentInfo
+          res.contentType 'application/x-bittorrent'
+
+          res.header 'Content-Length', output.length
+          res.attachment (doc.title + '.torrent')
+          res.send output
+
+
+          
+      
+    else
+      res.send 'This torrent does not exist', 404
+
+
+exports.show = (req, res) ->
+  Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
+    if doc
+      res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title }
+    else
+      res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
+
+
+
 

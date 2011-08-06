@@ -12,5 +12,8 @@ form(id='upload-form', method='post', enctype='multipart/form-data')
       label(for='upload-category') Category
       select(id='upload-category')
     li
+      label(for='upload-description') Description
+      textarea(id='upload-description', name='description')
+    li
       input(type='submit', value='Upload', id='upload-submit')
 
