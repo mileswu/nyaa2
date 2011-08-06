@@ -25,39 +25,44 @@ exports.upload_post = (req, res) ->
         hasher.update bencode.bencode(torrentInfo.info)
         infohash = hasher.digest 'hex'
 
-        if fields.title
-          title = fields.title
-        else
-          title = torrentInfo.info.name.toString 'utf8'
-
-        torrentFiles = []
-        if torrentInfo.info.files
-          size = 0
-          for file in torrentInfo.info.files
-            torrentFiles.push {
-              'path' : (file.path.toString 'utf8'),
-              'size' : file.length
+        Torrent.findOne {'infohash' : infohash}, (err, doc) ->
+          if doc
+            req.flash 'error', 'This torrent is already uploaded'
+            res.redirect ('/torrent/' + doc.permalink)
+          else
+            if fields.title
+              title = fields.title
+            else
+              title = torrentInfo.info.name.toString 'utf8'
+    
+            torrentFiles = []
+            if torrentInfo.info.files
+              size = 0
+              for file in torrentInfo.info.files
+                torrentFiles.push {
+                  'path' : (file.path.toString 'utf8'),
+                  'size' : file.length
+                }
+                size += file.length
+            else
+              size = torrentInfo.info.length
+              torrentFiles.push {
+                'path' : (torrentInfo.info.name.toString 'utf8'),
+                'size' : torrentInfo.info.length
+              }
+    
+            torrent = new Torrent {
+              'infohash' : infohash,
+              'size'     : size,
+              'title'    : title,
+              'files'    : torrentFiles,
+              'description' : fields.description
             }
-            size += file.length
-        else
-          size = torrentInfo.info.length
-          torrentFiles.push {
-            'path' : (torrentInfo.info.name.toString 'utf8'),
-            'size' : torrentInfo.info.length
-          }
-
-        torrent = new Torrent {
-          'infohash' : infohash,
-          'size'     : size,
-          'title'    : title,
-          'files'    : torrentFiles,
-          'description' : fields.description
-        }
-        torrent.generatePermalink (err) ->
-          torrent.save (err) ->
-            fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
-              fs.unlink files.torrent.path, (err) ->
-                res.redirect '/'
+            torrent.generatePermalink (err) ->
+              torrent.save (err) ->
+                fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
+                  fs.unlink files.torrent.path, (err) ->
+                    res.redirect ('/torrent/' + torrent.permalink)
   else
     req.flash 'error', "There was an error with the upload form"
     res.redirect '/upload'
