@@ -10,7 +10,9 @@ form(id='upload-form', method='post', enctype='multipart/form-data')
       input(name='title', id='upload-title')
     li
       label(for='upload-category') Category
-      select(id='upload-category')
+      select(name='category', id='upload-category')
+        - each cat_options, category in Categories.categories
+          option(value=category)= category
     li
       label(for='upload-description') Description
       textarea(id='upload-description', name='description')

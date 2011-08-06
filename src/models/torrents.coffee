@@ -20,6 +20,7 @@ Torrent = new Schema {
   files        : [File],
   description  : String,
   comments     : [Comment],
+  category     : String,
   infohash     : {type: String, index: {unique:true}}
   permalink    : {type: String, index: {unique:true}}
 }

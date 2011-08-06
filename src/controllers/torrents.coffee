@@ -2,6 +2,8 @@ fs = require 'fs'
 bencode = require '../../lib/bencode'
 crypto = require 'crypto'
 
+Categories = require('../models/categories').Categories
+
 Torrent = require('../models/torrents').Torrent
 
 
@@ -10,7 +12,7 @@ exports.list = (req, res) ->
     res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs}
 
 exports.upload = (req, res) ->
-  res.render 'torrents/upload', {'title' : 'Upload a torrent'}
+  res.render 'torrents/upload', {'title' : 'Upload a torrent', 'Categories' : Categories}
 
 exports.upload_post = (req, res) ->
   if req.form
@@ -18,12 +20,18 @@ exports.upload_post = (req, res) ->
       if !files.torrent
         req.flash 'error', "There was an error with the upload form"
         res.redirect '/upload'
+        return
       fs.readFile files.torrent.path, (err, data) ->
         # This needs full error checking to check .torrent is valid
         torrentInfo = bencode.bdecode data
         hasher = crypto.createHash 'sha1'
         hasher.update bencode.bencode(torrentInfo.info)
         infohash = hasher.digest 'hex'
+
+        if !fields.category? or !Categories.categories[fields.category]?
+          req.flash 'error', "There was an error with the upload form"
+          res.redirect '/upload'
+          return
 
         Torrent.findOne {'infohash' : infohash}, (err, doc) ->
           if doc
@@ -34,6 +42,7 @@ exports.upload_post = (req, res) ->
               title = fields.title
             else
               title = torrentInfo.info.name.toString 'utf8'
+
     
             torrentFiles = []
             if torrentInfo.info.files
@@ -56,7 +65,8 @@ exports.upload_post = (req, res) ->
               'size'     : size,
               'title'    : title,
               'files'    : torrentFiles,
-              'description' : fields.description
+              'description' : fields.description,
+              'category' : fields.category
             }
             torrent.generatePermalink (err) ->
               torrent.save (err) ->
