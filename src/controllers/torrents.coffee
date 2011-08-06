@@ -68,6 +68,9 @@ exports.upload_post = (req, res) ->
               'description' : fields.description,
               'category' : fields.category
             }
+            if req.session.user
+              torrent.uploader = req.session.user.name
+
             torrent.generatePermalink (err) ->
               torrent.save (err) ->
                 fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->

@@ -2,9 +2,9 @@ Schema = mongoose.Schema
 ObjectId = Schema.ObjectId
 
 Comment = new Schema {
-  body  : String,
-  author: ObjectId,
-  date  : Date
+  body      : String,
+  author_id : ObjectId,
+  date      : Date
 }
 
 File = new Schema {
@@ -13,7 +13,7 @@ File = new Schema {
 }
 
 Torrent = new Schema {
-  uploader     : ObjectId,
+  uploader     : String,
   title        : String,
   size         : Number,
   dateUploaded : {type: Date, default: new Date},

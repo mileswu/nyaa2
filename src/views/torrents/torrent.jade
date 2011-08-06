@@ -6,6 +6,12 @@
   p= torrent.size
   h3 Category
   p= torrent.category
+  h3 Uploader
+  p
+    - if (torrent.uploader === undefined)
+      | Anonymous
+    - else
+      a(href=('/user/' + torrent.uploader))= torrent.uploader
   h3 Description
   p= torrent.description
   h3 Files
