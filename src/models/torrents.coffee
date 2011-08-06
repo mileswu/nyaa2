@@ -40,12 +40,6 @@ Torrent.method 'generatePermalink', (callback) ->
         @permalink = url
         callback ''
   checkFunc baseurl, 0
-  
 
-
-
-TorrentModel = mongoose.model 'Torrent', Torrent
-
-
-exports.Torrent = TorrentModel
+module.exports = mongoose.model 'Torrent', Torrent
 

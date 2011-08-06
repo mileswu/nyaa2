@@ -1,4 +1,4 @@
-User = require('../models/users').User
+User = require('../models/users')
 
 exports.register = (req, res) ->
   if req.session.user?

@@ -2,9 +2,9 @@ fs = require 'fs'
 bencode = require '../../lib/bencode'
 crypto = require 'crypto'
 
-Categories = require('../models/categories').Categories
+Categories = require('../models/categories')
 
-Torrent = require('../models/torrents').Torrent
+Torrent = require('../models/torrents')
 
 
 exports.list = (req, res) -> 
