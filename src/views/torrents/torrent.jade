@@ -1,0 +1,15 @@
+- if (!torrent)
+  h2 This link is invalid
+- else
+  h2= torrent.title
+  h3 Size
+  p= torrent.size
+  h3 Description
+  p= torrent.description
+  h3 Files
+  table
+    - each file in torrent.files
+      tr
+        td= file.path
+        td= file.size
+
