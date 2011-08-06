@@ -1,0 +1,13 @@
+h2 Editing category #{name}
+
+form(method='post', action='/admin/category_edit')
+  input(type='hidden', name='oldname', value=name)
+  ul
+    li
+      label(for='category-name') Name
+      input(name='name', id='category-name', value=name)
+    li
+      label(for='category-icon') Icon
+      input(name='icon', id='category-icon', value=cat_options['icon'])
+    li
+      input(type='submit', value='Edit')

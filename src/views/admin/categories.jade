@@ -1,0 +1,10 @@
+h2 Listing all categories
+ul
+  - each cat_opt, category in Categories.categories
+    li
+      | #{category}
+      | - 
+      a(href='/admin/category/' + category + '/edit') Edit
+
+p
+  a(href='/admin/category/new') Add
