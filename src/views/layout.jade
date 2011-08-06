@@ -3,4 +3,9 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-  body!= body
+  body
+    #header
+      ul
+        li!= userlink
+        li: a(href='/') Home
+    #content!= body

@@ -30,6 +30,13 @@ app.configure 'production', -> app.use express.errorHandler()
 torrents = require './controllers/torrents'
 users = require './controllers/users'
 
+# Helpers
+
+app.dynamicHelpers
+  userlink: (req, res) ->
+    return '<a href="/login">Login</a>' if !req.session.user
+    '<a href="/users/' + req.session.user.name + '">' + req.session.user.name + '</a>'
+
 # Routes
 
 app.get '/', torrents.list
