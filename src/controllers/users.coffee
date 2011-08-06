@@ -32,9 +32,12 @@ exports.login = (req, res) ->
     res.render 'users/login', {title: 'Login'}
 
 exports.login_post = (req, res) ->
-  res.redirect '/login' if req.body.username is '' or req.body.password is ''
+  if req.body.username is '' or req.body.password is ''
+    req.flash 'error', 'You must specify a username and password'
+    res.redirect '/login'
+    return
   User.findOne {name_lc: req.body.username.toLowerCase()}, (err, user) ->
-    if err or !user.verifyPass req.body.password
+    if err or !user or !user.verifyPass req.body.password
       req.flash 'error', 'Invalid username or password.'
       res.redirect '/login'
     else
