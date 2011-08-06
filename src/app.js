@@ -42,6 +42,8 @@ app.get('/', torrents.list);
 app.get('/upload', torrents.upload);
 app.post('/upload', torrents.upload_post);
 
+app.get('/register', users.register);
+app.post('/register', users.register_post);
 app.get('/login', users.login);
 app.post('/login', users.login_post);
 

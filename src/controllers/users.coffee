@@ -1,5 +1,30 @@
 User = require('../models/users').User
 
+exports.register = (req, res) ->
+  if req.session.user?
+    res.redirect '/'
+  else
+    res.render 'users/register', {title: 'Register'}
+
+exports.register_post = (req, res) ->
+  if !req.body.username.match /^[a-z0-9_-]+$/i
+    req.flash 'error', 'Invalid characters in username.'
+    res.redirect '/register'
+    return
+  if req.body.password1 isnt req.body.password2
+    req.flash 'error', 'Passwords do not match.'
+    res.redirect '/register'
+    return
+  user = new User {name: req.body.username, pass: req.body.password1}
+  user.set 'email', req.body.email if req.body.email
+  user.save (err) ->
+    if err
+      req.flash 'error', 'That username is already taken.'
+      res.redirect '/register'
+    else
+      req.flash 'info', 'Successfuly created user "' + req.body.username + '".'
+      res.redirect '/login'
+
 exports.login = (req, res) ->
   if req.session.user?
     res.redirect '/'
