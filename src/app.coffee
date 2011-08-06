@@ -58,8 +58,11 @@ app.get '/login', users.login
 app.get '/logout', users.logout
 app.post '/login', users.login_post
 
-app.get '/users', users.list
-app.get '/users/:name', users.show
+app.get '/user', (req, res) ->
+  return res.redirect '/' if !req.session.user?
+  req.params.name = req.session.user.name
+  users.show req, res
+app.get '/user/:name', users.show
 
 # Listen
 
