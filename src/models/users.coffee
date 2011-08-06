@@ -19,6 +19,9 @@ User = new Schema
     required: true
   email:
     type: String
+  admin:
+    type: Boolean
+    default: false
   joinDate:
     type: Date
     default: Date.now
