@@ -6,7 +6,11 @@ html
   body
     #header
       ul
-        li!= userlink
+        - if(req.session.user)
+          li: a(href='/user/'+req.session.user.name)= req.session.user.name
+          li: a(href='/logout') Logout
+        - else
+          li: a(href='/login') Login
         li: a(href='/') Home
         li: a(href='/upload') Upload
     #content!= body

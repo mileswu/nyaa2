@@ -33,6 +33,7 @@ users = require './controllers/users'
 # Helpers
 
 app.dynamicHelpers
+  req: (req, res) -> return req
   userlink: (req, res) ->
     return '<a href="/login">Login</a>' if !req.session.user
     '<a href="/users/' + req.session.user.name + '">' + req.session.user.name + '</a>'
