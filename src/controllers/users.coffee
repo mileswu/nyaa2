@@ -46,12 +46,17 @@ exports.login_post = (req, res) ->
       req.session.user = user
       res.redirect '/'
 
-exports.list = (req, res) ->
-  User.find {}, (err, docs) ->
-    res.render 'users/list', {title: 'Listing users', users: docs}
-
 exports.logout = (req, res) ->
   if req.session.user?
     req.flash 'info', 'You were logged out successfully'
     delete req.session.user
   res.redirect '/'
+
+exports.list = (req, res) ->
+  User.find {}, (err, users) ->
+    res.render 'users/list', {title: 'Listing users', users}
+
+exports.show = (req, res) ->
+  User.findOne {name_lc: req.params.name.toLowerCase()}, (err, user) ->
+    res.send 404 if err
+    res.render 'users/show', {title: user.name, user}

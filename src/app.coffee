@@ -1,3 +1,5 @@
+#!/usr/bin/env coffee
+
 # Module dependencies.
 
 require 'coffee-script'
@@ -57,6 +59,7 @@ app.get '/logout', users.logout
 app.post '/login', users.login_post
 
 app.get '/users', users.list
+app.get '/users/:name', users.show
 
 # Listen
 
