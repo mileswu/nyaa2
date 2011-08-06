@@ -36,5 +36,5 @@ User.method 'verifyPass', (test) ->
   alg = @pass.substr 0, @pass.indexOf '-'
   @pass is generateHash test, alg
 
-exports.User = mongoose.model 'User', User
+module.exports = mongoose.model 'User', User
 
