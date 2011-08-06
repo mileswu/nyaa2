@@ -47,3 +47,8 @@ exports.list = (req, res) ->
   User.find {}, (err, docs) ->
     res.render 'users/list', {title: 'Listing users', users: docs}
 
+exports.logout = (req, res) ->
+  if req.session.user?
+    req.flash 'info', 'You were logged out successfully'
+    delete req.session.user
+  res.redirect '/'

@@ -53,6 +53,7 @@ app.get '/register', users.register
 app.post '/register', users.register_post
 
 app.get '/login', users.login
+app.get '/logout', users.logout
 app.post '/login', users.login_post
 
 app.get '/users', users.list
