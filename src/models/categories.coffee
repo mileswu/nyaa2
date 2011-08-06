@@ -10,7 +10,5 @@ class Categories
     json = JSON.stringify {'config' : @categories}
     fs.writeFileSync @configPath
 
-
-
-exports.Categories = new Categories(configFile)
+module.exports = new Categories(configFile)
 

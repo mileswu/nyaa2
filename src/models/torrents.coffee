@@ -26,6 +26,7 @@ Torrent = new Schema {
 }
 
 Torrent.method 'generatePermalink', (callback) ->
+<<<<<<< HEAD
   re = new RegExp(' ', 'g')
   baseurl = @title.substring(0, 75).replace(re, '_')
   # check for collisions
@@ -41,12 +42,6 @@ Torrent.method 'generatePermalink', (callback) ->
         @permalink = url
         callback ''
   checkFunc baseurl, 0
-  
 
-
-
-TorrentModel = mongoose.model 'Torrent', Torrent
-
-
-exports.Torrent = TorrentModel
+module.exports = mongoose.model 'Torrent', Torrent
 
