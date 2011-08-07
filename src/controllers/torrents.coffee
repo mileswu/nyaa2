@@ -5,7 +5,7 @@ crypto = require 'crypto'
 Categories = require('../models/categories')
 
 Torrent = require('../models/torrents')
-
+regex_escape = (str) -> str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
 
 exports.list = (req, res) -> 
   query = {}
@@ -15,7 +15,7 @@ exports.list = (req, res) ->
     searchtext = req.query.searchtext
     searchterms = searchtext.split(' ')
     searchterms = searchterms.map (t) ->
-      new RegExp t, 'i'
+      new RegExp regex_escape(t), 'i'
     
     query['title'] = {'$all' : searchterms}
 
