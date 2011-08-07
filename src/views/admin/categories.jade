@@ -1,10 +1,22 @@
 h2 Listing all categories
+h3 Categories
 ul
-  - each cat_opt, category in Categories.categories
+  - each cat_opt, category in categories
     li
       | #{category}
       | - 
       a(href='/admin/category/' + category + '/edit') Edit
-
+h3 Meta categories
+ul
+  - each cat_list, meta_cat_name in meta_categories
+    li
+      | #{meta_cat_name}
+      | - 
+      a(href='/admin/meta-category/' + meta_cat_name + '/edit') Edit
+      ul
+        - each cat in cat_list
+          li= cat
 p
-  a(href='/admin/category/new') Add
+  a(href='/admin/category/new') Add new category
+p
+  a(href='/admin/meta-category/new') Add new metacategory

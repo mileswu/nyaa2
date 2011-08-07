@@ -42,6 +42,7 @@ app.dynamicHelpers
   req: (req, res) -> return req
   categories: (req, res) -> return Categories.categories
   util: (req, res) -> return util
+  meta_categories: (req, res) -> return Categories.meta_categories
 
 # Routes
 
@@ -71,7 +72,9 @@ app.get '/admin/categories', admin.categories
 app.get '/admin/category/:name/edit', admin.category_edit
 app.get '/admin/category/new', admin.category_edit
 app.post '/admin/category_edit', admin.category_edit_post
-
+app.get '/admin/meta-category/:name/edit', admin.meta_category_edit
+app.get '/admin/meta-category/new', admin.meta_category_edit
+app.post '/admin/meta-category_edit', admin.meta_category_edit_post
 # Listen
 
 app.listen 3000
