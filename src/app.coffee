@@ -32,11 +32,13 @@ app.configure 'production', -> app.use express.errorHandler()
 torrents = require './controllers/torrents'
 users = require './controllers/users'
 admin = require './controllers/admin'
+Categories = require './models/categories'
 
 # Helpers
 
 app.dynamicHelpers
   req: (req, res) -> return req
+  categories: (req, res) -> return Categories.categories
 
 # Routes
 

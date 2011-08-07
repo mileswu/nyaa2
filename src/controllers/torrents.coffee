@@ -12,7 +12,7 @@ exports.list = (req, res) ->
     res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs}
 
 exports.upload = (req, res) ->
-  res.render 'torrents/upload', {'title' : 'Upload a torrent', 'Categories' : Categories}
+  res.render 'torrents/upload', {'title' : 'Upload a torrent'}
 
 exports.upload_post = (req, res) ->
   if req.form

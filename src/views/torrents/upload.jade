@@ -11,7 +11,7 @@ form(id='upload-form', method='post', enctype='multipart/form-data')
     li
       label(for='upload-category') Category
       select(name='category', id='upload-category')
-        - each cat_options, category in Categories.categories
+        - each cat_options, category in categories
           option(value=category)= category
     li
       label(for='upload-description') Description

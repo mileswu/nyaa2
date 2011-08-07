@@ -8,7 +8,7 @@ class Categories
   
   save: ->
     json = JSON.stringify {'config' : @categories}
-    fs.writeFileSync @configPath
+    res = fs.writeFileSync @configPath, json
 
 module.exports = new Categories(configFile)
 
