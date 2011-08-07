@@ -5,6 +5,8 @@
 require 'coffee-script'
 express = require 'express'
 form = require 'connect-form'
+util = require 'util'
+
 
 app = module.exports = express.createServer()
 
@@ -39,6 +41,7 @@ Categories = require './models/categories'
 app.dynamicHelpers
   req: (req, res) -> return req
   categories: (req, res) -> return Categories.categories
+  util: (req, res) -> return util
 
 # Routes
 

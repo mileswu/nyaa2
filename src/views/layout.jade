@@ -20,5 +20,6 @@ html
                 option(value=category)= category
             input(name='searchtext', value=req.query.searchtext)
             input(type='submit', value='Search')
-
+    - var flash = req.flash()
+    #flash= util.inspect(flash)
     #content!= body
