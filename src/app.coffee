@@ -31,14 +31,12 @@ app.configure 'production', -> app.use express.errorHandler()
 
 torrents = require './controllers/torrents'
 users = require './controllers/users'
+admin = require './controllers/admin'
 
 # Helpers
 
 app.dynamicHelpers
   req: (req, res) -> return req
-  userlink: (req, res) ->
-    return '<a href="/login">Login</a>' if !req.session.user
-    '<a href="/users/' + req.session.user.name + '">' + req.session.user.name + '</a>'
 
 # Routes
 
@@ -63,6 +61,11 @@ app.get '/user', (req, res) ->
   req.params.name = req.session.user.name
   users.show req, res
 app.get '/user/:name', users.show
+
+app.get '/admin/categories', admin.categories
+app.get '/admin/category/:name/edit', admin.category_edit
+app.get '/admin/category/new', admin.category_edit
+app.post '/admin/category_edit', admin.category_edit_post
 
 # Listen
 
