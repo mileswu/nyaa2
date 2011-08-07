@@ -8,8 +8,19 @@ Torrent = require('../models/torrents')
 
 
 exports.list = (req, res) -> 
-  Torrent.find {}, (err, docs) ->
-    res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs}
+  query = {}
+  if req.query.searchcategory and req.query.searchtext
+    query['category'] = req.query.searchcategory
+    
+    searchtext = req.query.searchtext
+    searchterms = searchtext.split(' ')
+    searchterms = searchterms.map (t) ->
+      new RegExp t, 'i'
+    
+    query['title'] = {'$all' : searchterms}
+
+  Torrent.find query, (err, docs) ->
+    res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext}
 
 exports.upload = (req, res) ->
   res.render 'torrents/upload', {'title' : 'Upload a torrent'}

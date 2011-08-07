@@ -13,4 +13,12 @@ html
           li: a(href='/login') Login
         li: a(href='/') Home
         li: a(href='/upload') Upload
+        li
+          form(action='/')
+            select(name='searchcategory')
+              - each cat_option, category in categories
+                option(value=category)= category
+            input(name='searchtext', value=req.query.searchtext)
+            input(type='submit', value='Search')
+
     #content!= body
