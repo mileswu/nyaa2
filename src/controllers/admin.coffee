@@ -18,6 +18,13 @@ exports.category_edit = (req, res) ->
 exports.category_edit_post = (req, res) ->
   oldname = req.body.oldname
   name = req.body.name
+  error_func = (req, res, msg, oldname) ->
+    req.flash 'error', msg
+    if oldname
+      res.redirect '/admin/category/' + encodeURIComponent(oldname) + '/edit'
+    else
+      res.redirect '/admin/category/new'
+  
   if oldname and !Categories.categories[oldname]?
     req.flash 'error', 'Invalid category'
     res.redirect '/admin/categories'
@@ -25,25 +32,13 @@ exports.category_edit_post = (req, res) ->
   
 
   if !req.body.icon? or !req.body.icon
-    req.flash 'error','You must specify an icon'
-    if oldname
-      res.redirect '/admin/category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/category/new'
+    error_func req, res, 'You must specify an icon', oldname
     return
   if !name? or !name
-    req.flash 'error','You must specify an name'
-    if oldname
-      res.redirect '/admin/category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/category/new'
+    error_func req, res, 'You must specify a name', oldname
     return
   if name != oldname and (Categories.categories[name]? or Categories.meta_categories[name]?)
-    req.flash 'error','A category named ' + name + ' already exists'
-    if oldname
-      res.redirect '/admin/category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/category/new'
+    error_func req, res, 'A category named ' + name + ' already exists', oldname
     return
   
   if oldname
@@ -72,44 +67,36 @@ exports.meta_category_edit = (req, res) ->
 exports.meta_category_edit_post = (req, res) ->
   oldname = req.body.oldname
   name = req.body.name
+
+  error_func = (req, res, msg, oldname) ->
+    req.flash 'error', msg
+    if oldname
+      res.redirect '/admin/meta-category/' + encodeURIComponent(oldname) + '/edit'
+    else
+      res.redirect '/admin/meta-category/new'
+  
   if oldname and !Categories.meta_categories[oldname]?
     req.flash 'error', 'Invalid meta-category'
     res.redirect '/admin/categories'
     return
   
   if !name? or !name
-    req.flash 'error','You must specify an name'
-    if oldname
-      res.redirect '/admin/meta-category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/meta-category/new'
+    error_func req, res, 'You must specify a name', oldname
     return
   if name != oldname and (Categories.categories[name]? or Categories.meta_categories[name]?)
-    req.flash 'error','A category named ' + name + ' already exists'
-    if oldname
-      res.redirect '/admin/meta-category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/meta-category/new'
+    error_func req, res, 'A category called ' + name + ' already exists', oldname
     return
     
   cats = req.body.categories
   if !cats
-    req.flash 'error','You must select one category'
-    if oldname
-      res.redirect '/admin/meta-category/' + encodeURIComponent(oldname) + '/edit'
-    else
-      res.redirect '/admin/meta-category/new'
+    error_func req, res, 'You must specify one category', oldname
     return
     
   if !Array.isArray(cats)
     cats = [cats]
   for i in cats
     if !Categories.categories[i]?
-      req.flash 'error','Form error'
-      if oldname
-        res.redirect '/admin/meta-category/' + encodeURIComponent(oldname) + '/edit'
-      else
-        res.redirect '/admin/meta-category/new'
+      error_func req, res, 'Form error (invalid category: ' + i +')' , oldname
       return
  
   if oldname
