@@ -9,7 +9,9 @@ ANNOUNCE_INTERVAL = 60
 MIN_INTERVAL      = 30
 
 # helper functions
-simple_response = (str) -> bencode str
+simple_response = (res, data) ->
+  res.setHeader 'Content-Type', 'text/plain'
+  res.end bencode data
 
 compact = (ip, port) -> ip.split('.').concat([port >> 8 & 0xFF, port & 0xFF]).map((c) -> String.fromCharCode c).join('')
 
@@ -77,7 +79,7 @@ class Tracker
   
   announce: (query, req, res) ->
     get_vars = parse query
-    return simple_response {'failure reason': 'Invalid Request'} unless get_vars['info_hash']? and get_vars['peer_id']?
+    return simple_response res, {'failure reason': 'Invalid Request'} unless get_vars['info_hash']? and get_vars['peer_id']?
     
     # GET requests of interest are:
     #   info_hash, peer_id, port, uploaded, downloaded, left,   <--- REQUIRED
@@ -89,15 +91,15 @@ class Tracker
     port = parseInt get_vars['port']
     left = parseInt get_vars['left']
     if info_hash == '' or peer_id == '' or isNaN(port) or isNaN(left)
-      return res.end simple_response {'failure reason': 'Invalid Request'}
+      return simple_response res, {'failure reason': 'Invalid Request'}
     
     @torrents.findOne {info_hash}, (err, exists) =>
-      if err? then return res.end simple_response {'failure reason': 'wat'}
-      if !exists then return res.end simple_response {'failure reason': 'This torrent does not exist'}
+      if err? then return simple_response res, {'failure reason': 'wat'}
+      if !exists then return simple_response res, {'failure reason': 'This torrent does not exist'}
       
       event = get_vars['event']
       if event == 'stopped' or event == 'paused'
-        return res.end simple_response('Nani?')
+        return simple_response res, 'Nani?'
       
       t = Date.now()
       key = 'torrent:' + info_hash
@@ -122,14 +124,14 @@ class Tracker
       
       numwant = parseInt get_vars['numwant']
       numwant = 50 if isNaN(numwant) or numwant < 0 or numwant > 50
-      console.log peer, numwant
+      
       multi
         .ZCOUNT(key + ':seeds', 0, t)
         .ZCOUNT(key + ':peers', 0, t)
         .ZRANGE(key + ':seeds', 0, numwant)
         .ZRANGE(key + ':peers', 0, numwant)
         .exec (err, replies) =>
-          if err? then return res.end simple_response {'failure reason': 'wat'}
+          if err? then return simple_response res, {'failure reason': 'wat'}
           doCompact = get_vars['compact'] is '1'
           
           peerlist = replies[5].concat(replies[6])
@@ -139,7 +141,7 @@ class Tracker
               if doCompact then compacted else {'peer id': peer_id, ip, port}
           peerlist = peerlist.join '' if doCompact
           
-          return res.end simple_response
+          return simple_response res,
             'interval'     : ANNOUNCE_INTERVAL
             'complete'     : replies[3]
             'incomplete'   : replies[4]
