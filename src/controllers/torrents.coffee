@@ -86,6 +86,8 @@ exports.upload_post = (req, res) ->
               }
               if req.session.user
                 torrent.uploader = req.session.user.name
+              if fields.useexternaltracker
+                torrent.external_tracker = torrentInfo.announce
       
               torrent.generatePermalink (err) ->
                 torrent.save (err) ->
