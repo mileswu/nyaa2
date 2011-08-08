@@ -109,7 +109,7 @@ exports.upload_post = (req, res) ->
             write_stream.write chunk
 
           h_res.on 'end', ->
-            write_stream.end
+            write_stream.end()
             process_file f_path
 
         h_req.on 'error', (err) ->
