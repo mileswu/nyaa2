@@ -21,6 +21,7 @@ Torrent = new Schema {
   description  : String,
   comments     : [Comment],
   category     : String,
+  external_tracker: String,
   infohash     : {type: String, index: {unique:true}}
   permalink    : {type: String, index: {unique:true}}
 }

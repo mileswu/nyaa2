@@ -6,6 +6,12 @@ form(id='upload-form', method='post', enctype='multipart/form-data')
       label(for='upload-file') File
       input(type='file', name='torrent', id='upload-file')
     li
+      label(for='upload-url') URL
+      input(name='torrenturl', id='upload-url')
+    li
+      label(for='upload-external') Use External Tracker already in torrent
+      input(name='useexternaltracker', id='upload-external', type='checkbox')
+    li
       label(for='upload-title') Title (optional)
       input(name='title', id='upload-title')
     li
