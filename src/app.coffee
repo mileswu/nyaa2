@@ -13,6 +13,8 @@ app = module.exports = express.createServer()
 global.mongoose = require 'mongoose'
 mongoose.connect 'mongodb://localhost/nyaa2'
 
+global.redis = require('redis').createClient 6379, '127.0.0.1' #, {'return_buffers' : true})
+
 # Configuration
 
 app.configure ->

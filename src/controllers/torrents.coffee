@@ -4,6 +4,9 @@ crypto = require 'crypto'
 http = require 'http'
 url = require 'url'
 
+DROP_COUNT = 2
+ANNOUNCE_INTERVAL = 60
+
 Categories = require('../models/categories')
 
 Torrent = require('../models/torrents')
@@ -22,7 +25,23 @@ exports.list = (req, res) ->
     query['title'] = {'$all' : searchterms}
 
   Torrent.find query, (err, docs) ->
-    res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext}
+    multi = redis.multi()
+    t = Date.now()
+    t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
+    for doc in docs
+      key_seed = 'torrent:' + doc.infohash + ':seeds'
+      key_peer = 'torrent:' + doc.infohash + ':peers'
+      multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
+      multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
+      multi.ZCARD key_peer
+      multi.ZCARD key_seed
+    multi.exec (err, replies) ->
+      for doc in docs
+        replies.shift()
+        replies.shift()
+        doc.peers = replies.shift()
+        doc.seeds = replies.shift()
+      res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext}
 
 exports.upload = (req, res) ->
   res.render 'torrents/upload', {'title' : 'Upload a torrent'}
@@ -155,7 +174,21 @@ exports.download = (req, res) ->
 exports.show = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
-      res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title }
+      multi = redis.multi()
+      t = Date.now()
+      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
+      key_seed = 'torrent:' + doc.infohash + ':seeds'
+      key_peer = 'torrent:' + doc.infohash + ':peers'
+      multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
+      multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
+      multi.ZCARD key_peer
+      multi.ZCARD key_seed
+      multi.exec (err, replies) ->
+        replies.shift()
+        replies.shift()
+        doc.peers = replies.shift()
+        doc.seeds = replies.shift()
+        res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title }
     else
       res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
 

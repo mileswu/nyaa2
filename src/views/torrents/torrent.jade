@@ -8,13 +8,15 @@
   p= torrent.category
   h3 Date Uploaded
   p(title=torrent.dateUploaded)= humanize_date(torrent.dateUploaded)
-  h3 Uploade
+  h3 Uploader
   p
     - if (torrent.uploader === undefined)
       | Anonymous
     - else
       a(href=('/user/' + torrent.uploader))= torrent.uploader
-  h3 Description
+  h3 Peers/Seeds
+  p #{torrent.peers} #{torrent.seeds}
+  3 Description
   p= torrent.description
   h3 Files
   table
