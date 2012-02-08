@@ -6,7 +6,9 @@
   p= humanize_size(torrent.size)
   h3 Category
   p= torrent.category
-  h3 Uploader
+  h3 Date Uploaded
+  p(title=torrent.dateUploaded)= humanize_date(torrent.dateUploaded)
+  h3 Uploade
   p
     - if (torrent.uploader === undefined)
       | Anonymous

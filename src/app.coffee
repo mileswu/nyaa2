@@ -62,6 +62,28 @@ app.helpers
       return size.toFixed(1) + ' GB'
     size /= 1024
     return size.toFixed(2) + ' TB'
+
+  humanize_date: (date) ->
+    now = new Date
+    deltat = (now - date)/1000 #javascript uses ms
+    
+    if deltat < 60
+      return "Less than a minute ago"
+    deltat /= 60
+    if deltat < 60
+      return deltat.toFixed(0) + " minutes ago"
+    deltat /= 60
+    if deltat < 24
+      return deltat.toFixed(0) + " hours ago"
+    deltat /= 24
+    if deltat < 30
+      return deltat.toFixed(0) + " days ago"
+    deltat /= 30
+    return deltat.toFixed(0) + " months ago"
+    
+
+
+
     
 
 # Routes

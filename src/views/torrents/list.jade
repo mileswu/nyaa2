@@ -8,6 +8,7 @@ p Welcome to list
         td
           a(href='/torrent/'+torrent.permalink)= torrent.title
         td= humanize_size(torrent.size)
+        td(title=torrent.dateUploaded)= humanize_date(torrent.dateUploaded)
         td= torrent.category
         td
           a(href='/torrent/'+torrent.permalink+'/download') DL
