@@ -3,7 +3,7 @@
 - else
   h2= torrent.title
   h3 Size
-  p= torrent.size
+  p= humanize_size(torrent.size)
   h3 Category
   p= torrent.category
   h3 Uploader
@@ -19,5 +19,5 @@
     - each file in torrent.files
       tr
         td= file.path
-        td= file.size
+        td= humanize_size(file.size)
 

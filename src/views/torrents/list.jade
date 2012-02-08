@@ -7,7 +7,7 @@ p Welcome to list
       tr
         td
           a(href='/torrent/'+torrent.permalink)= torrent.title
-        td= torrent.size
+        td= humanize_size(torrent.size)
         td= torrent.category
         td
           a(href='/torrent/'+torrent.permalink+'/download') DL

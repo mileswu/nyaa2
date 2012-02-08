@@ -44,6 +44,26 @@ app.dynamicHelpers
   util: (req, res) -> return util
   meta_categories: (req, res) -> return Categories.meta_categories
 
+app.helpers
+  humanize_size: (size) ->
+    if size < 1024
+      return size + ' B'
+    size /= 1024
+    
+    if size < 1024
+      return size.toFixed(0) + ' KB'
+    size /= 1024
+
+    if size < 1024
+      return size.toFixed(1) + ' MB'
+    size /= 1024
+    
+    if size < 1024
+      return size.toFixed(1) + ' GB'
+    size /= 1024
+    return size.toFixed(2) + ' TB'
+    
+
 # Routes
 
 app.get '/', torrents.list
@@ -67,6 +87,7 @@ app.get '/user', (req, res) ->
   req.params.name = req.session.user.name
   users.show req, res
 app.get '/user/:name', users.show
+app.get '/admin/users', users.list
 
 app.get '/admin/categories', admin.categories
 app.get '/admin/category/:name/edit', admin.category_edit
