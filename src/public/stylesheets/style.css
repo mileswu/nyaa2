@@ -4,7 +4,7 @@ html, body {
   padding: 0;
 }
 
-#content, #header {
+#content, #header, #footer {
   margin-left: auto;
   margin-right: auto;
   width: 900px;
@@ -60,6 +60,16 @@ html, body {
 #header form {
 	margin-top: -3px;
 }
+
+#footer {
+  font-size: 70%;
+  margin-top: 50px;
+}
+#footer p {
+  margin: 0;
+  padding: 0;
+}
+
 
 #flash {
 	border: 1px solid #a5a5a5;
