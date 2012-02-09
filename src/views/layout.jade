@@ -21,5 +21,8 @@ html
             input(name='searchtext', value=req.query.searchtext)
             input(type='submit', value='Search')
     - var flash = req.flash()
-    #flash= util.inspect(flash)
+    - if (flash.error)
+      #flash.error= flash.error
+    - if (flash.info)
+      #flash.info= flash.info
     #content!= body
