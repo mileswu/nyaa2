@@ -151,15 +151,23 @@ app.get '/user', (req, res) ->
   req.params.name = req.session.user.name
   users.show req, res
 app.get '/user/:name', users.show
-app.get '/admin/users', users.list
 
-app.get '/admin/categories', admin.categories
-app.get '/admin/category/:name/edit', admin.category_edit
-app.get '/admin/category/new', admin.category_edit
-app.post '/admin/category_edit', admin.category_edit_post
-app.get '/admin/meta-category/:name/edit', admin.meta_category_edit
-app.get '/admin/meta-category/new', admin.meta_category_edit
-app.post '/admin/meta-category_edit', admin.meta_category_edit_post
+isAdmin = (req, res, next) ->
+  if req.session.user and req.session.user.admin
+    next()
+  else
+    req.flash 'error', 'Unauthorized.'
+    res.redirect '/'
+
+app.get '/admin/users', isAdmin, users.list
+
+app.get '/admin/categories', isAdmin, admin.categories
+app.get '/admin/category/:name/edit', isAdmin, admin.category_edit
+app.get '/admin/category/new', isAdmin, admin.category_edit
+app.post '/admin/category_edit', isAdmin, admin.category_edit_post
+app.get '/admin/meta-category/:name/edit', isAdmin, admin.meta_category_edit
+app.get '/admin/meta-category/new', isAdmin, admin.meta_category_edit
+app.post '/admin/meta-category_edit', isAdmin, admin.meta_category_edit_post
 # Listen
 
 app.listen 3000

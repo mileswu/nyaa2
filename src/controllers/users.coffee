@@ -44,6 +44,10 @@ exports.login_post = (req, res) ->
       user.lastLogin = new Date
       user.save()
       req.session.user = user
+      if user.admin
+        req.session.admin = true
+      else
+        req.session.admin = false
       res.redirect '/'
 
 exports.logout = (req, res) ->
