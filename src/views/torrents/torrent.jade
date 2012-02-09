@@ -14,9 +14,9 @@
       | Anonymous
     - else
       a(href=('/user/' + torrent.uploader))= torrent.uploader
-  h3 Peers/Seeds
-  p #{torrent.peers} #{torrent.seeds}
-  3 Description
+  h3 Peers/Seeds/Snatches
+  p #{torrent.peers} #{torrent.seeds} #{torrent.snatches}
+  h3 Description
   p= torrent.description
   h3 Files
   table

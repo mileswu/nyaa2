@@ -25,7 +25,7 @@ exports.list = (req, res) ->
     query['title'] = {'$all' : searchterms}
 
   Torrent.count query, (err, count) ->
-    q = Torrent.find query, ['title', 'size', 'dateUploaded', 'category', 'permalink']
+    q = Torrent.find query, ['title', 'size', 'dateUploaded', 'category', 'permalink', 'snatches']
     q.sort 'dateUploaded', 1
     resperpage = 50 #50 per page
     q.limit(resperpage)

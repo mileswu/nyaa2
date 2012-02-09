@@ -16,6 +16,7 @@ Torrent = new Schema {
   uploader     : String,
   title        : String,
   size         : Number,
+  snatches     : {type: Number, default: 0},
   dateUploaded : {type: Date, default: new Date},
   files        : [File],
   description  : String,

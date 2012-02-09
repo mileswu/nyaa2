@@ -12,6 +12,7 @@ p Welcome to list
         td= torrent.category
         td= torrent.seeds
         td= torrent.peers
+        td= torrent.snatches
         td
           a(href='/torrent/'+torrent.permalink+'/download') DL
   p !{paginate(page, lastpage, req)}
