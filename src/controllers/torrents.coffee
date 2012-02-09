@@ -27,7 +27,7 @@ exports.list = (req, res) ->
   Torrent.count query, (err, count) ->
     q = Torrent.find query, ['title', 'size', 'dateUploaded', 'category', 'permalink']
     q.sort 'dateUploaded', 1
-    resperpage = 2 #2 per page
+    resperpage = 50 #50 per page
     q.limit(resperpage)
     page = parseInt(req.query.page)
     if !isNaN(page)
