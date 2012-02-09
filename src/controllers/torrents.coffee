@@ -148,7 +148,7 @@ exports.download = (req, res) ->
           torrentInfo = bencode.bdecode data
           if torrentInfo['announce-list']
             delete torrentInfo['announce-list']
-          torrentInfo.announce = 'mahtracker'
+          torrentInfo.announce = 'http://bt-tracker.uguu-subs.org:9001/announce'
           
           output = bencode.bencode torrentInfo
           res.contentType 'application/x-bittorrent'

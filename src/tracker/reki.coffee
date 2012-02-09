@@ -211,6 +211,6 @@ class Tracker
             'min interval' : MIN_INTERVAL
             'peers'        : peerlist
 
-port = parseInt(process.argv[2]) || 6969
+port = parseInt(process.argv[2]) || 9001
 console.log ('Starting tracker on 127.0.0.1:' + port + '...')
 new Tracker port
