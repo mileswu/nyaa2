@@ -29,9 +29,11 @@ exports.list = (req, res) ->
     q.sort 'dateUploaded', 1
     resperpage = 2 #2 per page
     q.limit(resperpage)
-    if req.query.page
-      q.skip((req.query.page-1)*resperpage)
+    page = parseInt(req.query.page)
+    if !isNaN(page)
+      q.skip((page-1)*resperpage)
     else
+      page = 1
       q.skip(0)
   
     q.exec (err, docs) ->
@@ -51,7 +53,7 @@ exports.list = (req, res) ->
           replies.shift()
           doc.peers = replies.shift()
           doc.seeds = replies.shift()
-        res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext, 'page' : req.query.page, 'count' : count, 'lastpage' : Math.ceil(count/resperpage) }
+        res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext, 'page' : page, 'count' : count, 'lastpage' : Math.ceil(count/resperpage) }
 
 exports.upload = (req, res) ->
   res.render 'torrents/upload', {'title' : 'Upload a torrent'}

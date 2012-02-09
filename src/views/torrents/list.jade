@@ -14,6 +14,8 @@ p Welcome to list
         td= torrent.peers
         td
           a(href='/torrent/'+torrent.permalink+'/download') DL
+  p !{paginate(page, lastpage, req)}
+
 - else
   p there were no torrents
 

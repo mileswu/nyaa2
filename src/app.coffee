@@ -6,7 +6,7 @@ require 'coffee-script'
 express = require 'express'
 form = require 'connect-form'
 util = require 'util'
-
+qs = require 'querystring'
 
 app = module.exports = express.createServer()
 
@@ -82,10 +82,49 @@ app.helpers
       return deltat.toFixed(0) + " days ago"
     deltat /= 30
     return deltat.toFixed(0) + " months ago"
+
+  paginate: (page, lastpage, req) ->
+    numlinks = 7
+    if lastpage == 1
+      return ''
+
+    bound = (i, min, max) ->
+      if i < min
+        i = min
+      else if i > max
+        i = max
+      i
+
+    if lastpage <= numlinks
+       start = 1
+       end = lastpage
+    else
+       start = bound page - (numlinks + 1) >> 1, 1, lastpage - numlinks
+       end = start + numlinks
+
+    pagestr = ''
+
+    q = {}
+    q[k] = v for k, v of req.query
+    make_url = (pagen) ->
+      q['page'] = pagen
+      req.route.path + '?' + qs.stringify q
+
+    if page != 1
+      pagestr += "<a href=\"#{make_url 1}\">&lArr; First</a>"
+      pagestr += "<a href=\"#{make_url start - 1}\">&larr; Prev</a>"
     
-
-
-
+    for i in [start..end] by 1
+      if i isnt page
+        pagestr += "<a href=\"#{make_url i}\">#{i}</a>"
+      else
+        pagestr += "#{i}"
+    
+    if page != lastpage
+      pagestr += "<a href=\"#{make_url page + 1}\">Next &rarr;</a>"
+      pagestr += "<a href=\"#{make_url lastpage}\">Last &rArr;</a>"
+    
+    "<div class=\"pagination\">#{pagestr}</div>"
     
 
 # Routes
