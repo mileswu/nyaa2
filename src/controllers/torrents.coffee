@@ -24,24 +24,34 @@ exports.list = (req, res) ->
     
     query['title'] = {'$all' : searchterms}
 
-  Torrent.find query, (err, docs) ->
-    multi = redis.multi()
-    t = Date.now()
-    t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
-    for doc in docs
-      key_seed = 'torrent:' + doc.infohash + ':seeds'
-      key_peer = 'torrent:' + doc.infohash + ':peers'
-      multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
-      multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
-      multi.ZCARD key_peer
-      multi.ZCARD key_seed
-    multi.exec (err, replies) ->
+  Torrent.count query, (err, count) ->
+    q = Torrent.find query
+    q.sort 'dateUploaded', 1
+    resperpage = 2 #2 per page
+    q.limit(resperpage)
+    if req.query.page
+      q.skip((req.query.page-1)*resperpage)
+    else
+      q.skip(0)
+  
+    q.exec (err, docs) ->
+      multi = redis.multi()
+      t = Date.now()
+      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
       for doc in docs
-        replies.shift()
-        replies.shift()
-        doc.peers = replies.shift()
-        doc.seeds = replies.shift()
-      res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext}
+        key_seed = 'torrent:' + doc.infohash + ':seeds'
+        key_peer = 'torrent:' + doc.infohash + ':peers'
+        multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
+        multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
+        multi.ZCARD key_peer
+        multi.ZCARD key_seed
+      multi.exec (err, replies) ->
+        for doc in docs
+          replies.shift()
+          replies.shift()
+          doc.peers = replies.shift()
+          doc.seeds = replies.shift()
+        res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext, 'page' : req.query.page, 'count' : count, 'lastpage' : Math.ceil(count/resperpage) }
 
 exports.upload = (req, res) ->
   res.render 'torrents/upload', {'title' : 'Upload a torrent'}
