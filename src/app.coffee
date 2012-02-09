@@ -119,7 +119,7 @@ app.helpers
       if i isnt page
         pagestr += "<a href=\"#{make_url i}\">#{i}</a>"
       else
-        pagestr += "#{i}"
+        pagestr += "<span class=\"thispage\">#{i}</span>"
     
     if page != lastpage
       pagestr += "<a href=\"#{make_url page + 1}\">Next &rarr;</a>"

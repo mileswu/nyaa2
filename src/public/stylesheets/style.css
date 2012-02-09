@@ -160,3 +160,18 @@ form label {
 tr:nth-child(2n) {
 	background-color: #e3e3ff;
 }
+
+.pagination {
+	text-align: center;
+	margin-top: 25px;
+}
+
+.pagination a, .pagination .thispage {
+	border: 1px solid #c8c8c8;
+	padding-top: 3px;
+	padding-left: 8px;
+	padding-bottom: 3px;
+	padding-right: 8px;
+	margin-right: 2px;
+	margin-left: 2px;	
+}
