@@ -1,4 +1,5 @@
 User = require('../models/users')
+Torrent = require('../models/torrents')
 
 exports.register = (req, res) ->
   if req.session.user?
@@ -64,4 +65,7 @@ exports.show = (req, res) ->
   User.findOne {name_lc: req.params.name.toLowerCase()}, (err, user) ->
     return res.send 500 if err
     return res.send 404 if !user?
-    res.render 'users/show', {title: user.name, user}
+    query = { uploader: user.name }
+    q = Torrent.find query
+    Torrent.findTorrents q, (torrents) ->
+      res.render 'users/show', {title: user.name, user, torrents}

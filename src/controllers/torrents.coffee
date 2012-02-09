@@ -25,7 +25,7 @@ exports.list = (req, res) ->
     query['title'] = {'$all' : searchterms}
 
   Torrent.count query, (err, count) ->
-    q = Torrent.find query, ['title', 'size', 'dateUploaded', 'category', 'permalink', 'snatches']
+    q = Torrent.find query
     q.sort 'dateUploaded', 1
     resperpage = 50 #50 per page
     q.limit(resperpage)
@@ -35,25 +35,9 @@ exports.list = (req, res) ->
     else
       page = 1
       q.skip(0)
-  
-    q.exec (err, docs) ->
-      multi = redis.multi()
-      t = Date.now()
-      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
-      for doc in docs
-        key_seed = 'torrent:' + doc.infohash + ':seeds'
-        key_peer = 'torrent:' + doc.infohash + ':peers'
-        multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
-        multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
-        multi.ZCARD key_peer
-        multi.ZCARD key_seed
-      multi.exec (err, replies) ->
-        for doc in docs
-          replies.shift()
-          replies.shift()
-          doc.peers = replies.shift()
-          doc.seeds = replies.shift()
-        res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext, 'page' : page, 'count' : count, 'lastpage' : Math.ceil(count/resperpage) }
+
+    Torrent.findTorrents q, (docs) ->
+      res.render 'torrents/list', {'title' : 'Listing torrents', 'torrents' : docs, 'searchcategory' : req.query.searchcategory, 'searchtext' : req.query.searchtext, 'page' : page, 'count' : count, 'lastpage' : Math.ceil(count/resperpage) }
 
 exports.upload = (req, res) ->
   res.render 'torrents/upload', {'title' : 'Upload a torrent'}

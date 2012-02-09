@@ -1,12 +1,8 @@
 h1= title
 
-dl
-  dt admin
-  dd #{user.admin ? 'yes' : 'no'}
+h2 Dates
+p Last logged on #{humanize_date(user.lastLogin)}. Registered #{humanize_date(user.joinDate)}.
 
-  dt join date
-  dd #{user.joinDate}
-
-  dt last login
-  dd #{user.lastLogin}
+h2 Uploads (#{torrents.length})
+!= partial('torrents/torrenttable.jade', {object: torrents})
 
