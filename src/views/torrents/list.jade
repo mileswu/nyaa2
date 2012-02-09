@@ -1,15 +1,25 @@
-h1 list
-p Welcome to list
+//-h1 d
 
 - if (torrents.length)
-  table
+  - if (req.query.searchtext && req.query.searchcategory)
+    p Searched for "#{req.query.searchtext}" in #{req.query.searchcategory} and found #{count} torrents:
+  - else
+    p There are #{count} torrents being tracked.
+  table#torrent-table
+    tr
+      th#torrent-table-header-name
+      th Size
+      th Age
+      th SE
+      th LE
+      th DLs
+      th
     - each torrent in torrents
       tr
         td
           a(href='/torrent/'+torrent.permalink)= torrent.title
         td= humanize_size(torrent.size)
         td(title=torrent.dateUploaded)= humanize_date(torrent.dateUploaded)
-        td= torrent.category
         td= torrent.seeds
         td= torrent.peers
         td= torrent.snatches
@@ -18,6 +28,6 @@ p Welcome to list
   p !{paginate(page, lastpage, req)}
 
 - else
-  p there were no torrents
+  p There were no torrents found.
 
 

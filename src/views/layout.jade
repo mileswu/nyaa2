@@ -2,27 +2,34 @@
 html
   head
     title= title
+    link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Droid+Sans|Acme|Chelsea+Market|Amaranth')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    #header
-      ul
-        - if(req.session.user)
-          li: a(href='/user/'+req.session.user.name)= req.session.user.name
-          li: a(href='/logout') Logout
-        - else
-          li: a(href='/login') Login
-        li: a(href='/') Home
-        li: a(href='/upload') Upload
-        li
-          form(action='/')
-            select(name='searchcategory')
-              - each cat_option, category in categories
-                option(value=category)= category
-            input(name='searchtext', value=req.query.searchtext)
-            input(type='submit', value='Search')
-    - var flash = req.flash()
-    - if (flash.error)
-      #flash.error= flash.error
-    - if (flash.info)
-      #flash.info= flash.info
-    #content!= body
+    #header-bkg 
+      #header
+        #logo
+          a(href='/')
+            span uguu~
+            | tracker
+        #nav
+          ul
+            - if(req.session.user)
+              li: a(href='/user/'+req.session.user.name)= req.session.user.name
+              li: a(href='/logout') Logout
+            - else
+              li: a(href='/login') Login
+            li: a(href='/upload') Upload
+            li
+              form(action='/')
+                select(name='searchcategory')
+                  - each cat_option, category in categories
+                    option(value=category)= category
+                input(name='searchtext', value=req.query.searchtext, size='30')
+                //-input(type='submit', value='Search')
+    #content
+      - var flash = req.flash()
+      - if (flash.error)
+        #flash.error= flash.error
+      - if (flash.info)
+        #flash.info= flash.info
+      !{body}

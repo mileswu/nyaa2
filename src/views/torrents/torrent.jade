@@ -2,24 +2,27 @@
   h2 This link is invalid
 - else
   h2= torrent.title
-  h3 Size
-  p= humanize_size(torrent.size)
-  h3 Category
-  p= torrent.category
-  h3 Date Uploaded
-  p(title=torrent.dateUploaded)= humanize_date(torrent.dateUploaded)
-  h3 Uploader
-  p
-    - if (torrent.uploader === undefined)
-      | Anonymous
-    - else
-      a(href=('/user/' + torrent.uploader))= torrent.uploader
-  h3 Peers/Seeds/Snatches
-  p #{torrent.peers} #{torrent.seeds} #{torrent.snatches}
   h3 Description
   p= torrent.description
+  h3 Download
+  p
+    a(href=('/torrent/' + torrent.permalink + '/download')) Torrent (#{humanize_size(torrent.size)})
+  h3 Category
+  p= torrent.category
+  h3 Uploaded
+  p(title=torrent.dateUploaded) #{humanize_date(torrent.dateUploaded)} 
+    - if (torrent.uploader === undefined)
+      | by Anonymous
+    - else
+      | by 
+      a(href=('/user/' + torrent.uploader))= torrent.uploader
+  h3 Statistics
+  p Peers: #{torrent.peers}, Seeds: #{torrent.seeds}, Downloads: #{torrent.snatches}
   h3 Files
-  table
+  table#file-table
+    tr
+      th Filename
+      th Size
     - each file in torrent.files
       tr
         td= file.path
