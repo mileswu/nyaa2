@@ -4,9 +4,6 @@ crypto = require 'crypto'
 http = require 'http'
 url = require 'url'
 
-DROP_COUNT = 2
-ANNOUNCE_INTERVAL = 60
-
 Categories = require('../models/categories')
 
 Torrent = require('../models/torrents')
