@@ -7,11 +7,11 @@ express = require 'express'
 form = require 'connect-form'
 util = require 'util'
 qs = require 'querystring'
+RedisStore = require('connect-redis')(express);
 
 app = module.exports = express.createServer()
 
 global.mongoose = require 'mongoose'
-mongoose.connect 'mongodb://localhost/nyaa2'
 
 global.redis = require('redis').createClient 6379, '127.0.0.1' #, {'return_buffers' : true})
 
@@ -24,13 +24,20 @@ app.configure ->
   app.use express.logger()
   app.use express.methodOverride()
   app.use express.cookieParser()
-  app.use express.session {secret: 'himitsu'}
+  app.use express.session {secret: 'himitsu', store: new RedisStore}
   app.use form {keepExtensions: true}
   app.use app.router
   app.use express.static __dirname + '/public'
 
-app.configure 'development', -> app.use express.errorHandler {dumpExceptions: true, showStack: true}
-app.configure 'production', -> app.use express.errorHandler()
+port = 0
+app.configure 'development', ->
+  mongoose.connect 'mongodb://localhost/nyaa2'
+  app.use express.errorHandler {dumpExceptions: true, showStack: true}
+  port = 3000
+app.configure 'production', ->
+  mongoose.connect 'mongodb://localhost/uguutracker'
+  app.use express.errorHandler()
+  port = 9000
 
 # Load
 
@@ -170,6 +177,6 @@ app.get '/admin/meta-category/new', isAdmin, admin.meta_category_edit
 app.post '/admin/meta-category_edit', isAdmin, admin.meta_category_edit_post
 # Listen
 
-app.listen 3000
+app.listen port
 console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env
 
