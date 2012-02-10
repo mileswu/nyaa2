@@ -92,7 +92,7 @@ class Tracker
     # mongodb
     @torrents = null
     mongo = require('mongodb')
-    db = new mongo.Db 'nyaa2', new mongo.Server('localhost', mongo.Connection.DEFAULT_PORT, {native_praser: true})
+    db = new mongo.Db 'uguutracker', new mongo.Server('localhost', mongo.Connection.DEFAULT_PORT, {native_praser: true})
     db.open (err, db) =>
       throw new Error('could not open db') if err?
       console.log 'connected to mongodb'
