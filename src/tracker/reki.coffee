@@ -145,7 +145,7 @@ class Tracker
             if data != 0
               callback()
             else
-              console.log 'mongo'
+              console.log 'mongo ' + info_hash
               @torrents.findOne {'infohash' : info_hash}, (err, exists) =>
                 if exists
                   callback()
