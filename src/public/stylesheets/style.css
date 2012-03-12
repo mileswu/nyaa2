@@ -175,3 +175,7 @@ tr:nth-child(2n) {
 	margin-right: 2px;
 	margin-left: 2px;	
 }
+
+.delete {
+  color: #9e0002;
+}

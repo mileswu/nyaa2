@@ -55,6 +55,7 @@ exports.logout = (req, res) ->
   if req.session.user?
     req.flash 'info', 'You were logged out successfully'
     delete req.session.user
+    delete req.session.admin
   res.redirect '/'
 
 exports.list = (req, res) ->

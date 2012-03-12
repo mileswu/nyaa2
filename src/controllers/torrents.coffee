@@ -139,6 +139,20 @@ exports.upload_post = (req, res) ->
     req.flash 'error', "There was an error with the upload form"
     res.redirect '/upload'
 
+exports.delete = (req, res) ->
+  Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
+    if doc
+      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user)
+        doc.remove()
+        req.flash 'info', "Your torrent was successfully deleted"
+        res.redirect '/'
+      else
+        res.send 'Not authorized to do this', 400
+    else
+      res.send 'This torrent does not exist', 404
+			
+  
+
 exports.download = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc

@@ -144,6 +144,7 @@ app.post '/upload', torrents.upload_post
 
 app.get '/torrent/:permalink', torrents.show
 app.get '/torrent/:permalink/download', torrents.download
+app.get '/torrent/:permalink/delete', torrents.delete
 
 
 app.get '/register', users.register
