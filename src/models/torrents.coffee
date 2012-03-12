@@ -27,16 +27,16 @@ Torrent = new Schema {
   permalink    : {type: String, index: {unique:true}}
 }
 
-DROP_COUNT = 2
-ANNOUNCE_INTERVAL = 60
+DROP_COUNT = 3
+ANNOUNCE_INTERVAL = 300
 
 Torrent.statics.findTorrents = (q, callback) ->
-  q.only ['title', 'size', 'dateUploaded', 'category', 'permalink', 'snatches']
+  q.only ['title', 'size', 'dateUploaded', 'category', 'permalink', 'snatches', 'infohash']
+  q.sort 'dateUploaded', -1
   q.exec (err, docs) ->
-    require('util').debug('hi')
     multi = redis.multi()
     t = Date.now()
-    t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
+    t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
     for doc in docs
       key_seed = 'torrent:' + doc.infohash + ':seeds'
       key_peer = 'torrent:' + doc.infohash + ':peers'

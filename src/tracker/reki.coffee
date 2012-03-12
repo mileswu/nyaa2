@@ -6,8 +6,9 @@ fs   = require 'fs'
 bencode2 = require '../../lib/bencode'
 
 # defines
-ANNOUNCE_INTERVAL = 60
-MIN_INTERVAL      = 30
+ANNOUNCE_INTERVAL = 300
+MIN_INTERVAL      = 60
+DROP_COUNT = 3
 
 # helper functions
 simple_response = (res, data) ->
@@ -159,8 +160,8 @@ class Tracker
       
       t = Date.now()
       multi = redis.multi()
-        .ZREMRANGEBYSCORE(key_seed, 0, t - ANNOUNCE_INTERVAL * 6000)
-        .ZREMRANGEBYSCORE(key_peer, 0, t - ANNOUNCE_INTERVAL * 6000)
+        .ZREMRANGEBYSCORE(key_seed, 0, t - ANNOUNCE_INTERVAL * DROP_COUNT *1000)
+        .ZREMRANGEBYSCORE(key_peer, 0, t - ANNOUNCE_INTERVAL * DROP_COUNT *1000)
       
       ip = get_vars['ip'] #REALLY SHOULD CHECK THIS IS A VALID IP
       ip = req.client.remoteAddress if !ip?
