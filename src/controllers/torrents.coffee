@@ -142,7 +142,7 @@ exports.upload_post = (req, res) ->
 exports.delete = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
-      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user)
+      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
         doc.remove()
         req.flash 'info', "Your torrent was successfully deleted"
         res.redirect '/'
