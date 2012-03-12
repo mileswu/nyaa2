@@ -4,6 +4,9 @@ crypto = require 'crypto'
 http = require 'http'
 url = require 'url'
 
+DROP_COUNT = 3
+ANNOUNCE_INTERVAL = 300
+
 Categories = require('../models/categories')
 
 Torrent = require('../models/torrents')
@@ -23,7 +26,6 @@ exports.list = (req, res) ->
 
   Torrent.count query, (err, count) ->
     q = Torrent.find query
-    q.sort 'dateUploaded', 1
     resperpage = 50 #50 per page
     q.limit(resperpage)
     page = parseInt(req.query.page)
@@ -94,7 +96,8 @@ exports.upload_post = (req, res) ->
                 'title'    : title,
                 'files'    : torrentFiles,
                 'description' : fields.description,
-                'category' : fields.category
+                'category' : fields.category,
+                'dateUploaded': new Date
               }
               if req.session.user
                 torrent.uploader = req.session.user.name
@@ -169,7 +172,7 @@ exports.show = (req, res) ->
     if doc
       multi = redis.multi()
       t = Date.now()
-      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT
+      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
       key_seed = 'torrent:' + doc.infohash + ':seeds'
       key_peer = 'torrent:' + doc.infohash + ':peers'
       multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
