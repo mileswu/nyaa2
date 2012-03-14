@@ -28,6 +28,6 @@
         td= file.path
         td= humanize_size(file.size)
   h3 Problem
-  - if(req.session.admin == true || (torrent.uploader !== undefined && torrent.uploader == req.session.user.name))
+  - if(req.session.admin == true || (req.session.user && torrent.uploader !== undefined && torrent.uploader == req.session.user.name))
     a(class='delete', href=('/torrent/' + torrent.permalink + '/delete')) Delete torrent
 
