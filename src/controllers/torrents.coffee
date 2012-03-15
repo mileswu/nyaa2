@@ -198,10 +198,22 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title }
+        res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
     else
       res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
 
-
-
-
+exports.edit = (req, res) ->
+  Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
+    if doc
+      if req.body.id == 'description'
+        doc.description = req.body.value
+        doc.save (err) ->
+          res.send doc.description
+      else if req.body.id == 'title'
+        doc.title = req.body.value
+        doc.save (err) ->
+          res.send doc.title
+      else
+        res.send 'boo'
+    else
+      res.send 'boo'
