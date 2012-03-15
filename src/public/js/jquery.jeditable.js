@@ -138,6 +138,8 @@
                 if (false === onedit.apply(this, [settings, self])) {
                    return;
                 }
+
+								$(self).addClass(settings.parentcssclass);
                 
                 /* prevent default action and bubbling */
                 e.preventDefault();
@@ -370,6 +372,7 @@
                     
                     /* show tooltip again */
                     $(self).attr('title', settings.tooltip);
+										$(self).removeClass(settings.parentcssclass);
                     
                     return false;
                 });
@@ -390,6 +393,7 @@
                         if (settings.tooltip) {
                             $(self).attr('title', settings.tooltip);                
                         }
+												$(self).removeClass(settings.parentcssclass);
                     }                    
                 }
             };            
@@ -537,7 +541,8 @@
         placeholder: 'Click to edit',
         loaddata   : {},
         submitdata : {},
-        ajaxoptions: {}
+        ajaxoptions: {},
+				parentcssclass : 'beingedited'
     };
 
 })(jQuery);
