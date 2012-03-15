@@ -139,7 +139,6 @@
                    return;
                 }
 
-								$(self).addClass(settings.parentcssclass);
                 
                 /* prevent default action and bubbling */
                 e.preventDefault();
@@ -177,6 +176,7 @@
                 self.editing    = true;
                 self.revert     = $(self).html();
                 $(self).html('');
+								$(self).addClass(settings.parentcssclass);
 
                 /* create the form object */
                 var form = $('<form />');

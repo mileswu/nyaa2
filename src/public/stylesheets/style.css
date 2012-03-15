@@ -180,6 +180,10 @@ tr:nth-child(2n) {
   color: #9e0002;
 }
 
+span.editable {
+	display: inline-block;
+}
+
 span.editable:hover:not(.beingedited) {
 	padding-left: 10px;
 	margin-left: -10px;
@@ -187,6 +191,7 @@ span.editable:hover:not(.beingedited) {
 	padding-top: 5px;
 	margin-top: -5px;
 	padding-bottom: 5px;
+	margin-bottom: -5px;
 	background-color: #ffffd3;
 }
 
