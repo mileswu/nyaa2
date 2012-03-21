@@ -195,3 +195,7 @@ span.editable:hover:not(.beingedited) {
 	background-color: #ffffd3;
 }
 
+.editable textarea {
+	display: block;
+}
+
