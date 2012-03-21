@@ -2,16 +2,16 @@
   h2 This link is invalid
 - else
   h2
-    span(class='editable', id='title')= torrent.title
+    span(id='title')= torrent.title
   h3 Description
   p
-    span(class='editable', id='description')= torrent.description
+    span(id='description')= torrent.description
   h3 Download
   p
     a(href=('/torrent/' + torrent.permalink + '/download')) Torrent (#{humanize_size(torrent.size)})
   h3 Category
   p
-    span(class='editable', id='category')= torrent.category
+    span(id='category')= torrent.category
   h3 Uploaded
   p(title=torrent.dateUploaded) #{humanize_date(torrent.dateUploaded)} 
     - if (torrent.uploader === undefined)

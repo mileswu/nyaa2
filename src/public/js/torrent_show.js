@@ -20,4 +20,6 @@ $(document).ready(function() {
 		loaddata: loaddatafn,
 		loadurl: "/categories_json"
 	}));
+
+	$('#description, #title, #category').addClass('editable');
 });

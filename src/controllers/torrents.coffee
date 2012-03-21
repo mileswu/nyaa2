@@ -198,7 +198,10 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
+        if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
+          res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
+        else
+          res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title}
     else
       res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
 
@@ -210,8 +213,14 @@ exports.categories_json = (req, res) ->
   res.send JSON.stringify(output)
 
 exports.edit = (req, res) ->
+  #perhaps send proper error codes, but then dunno how to do AJAX end
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
+      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
+      else
+        res.send 'Not authorized to do this'
+        return
+
       if req.body.id == 'description'
         doc.description = req.body.value
         doc.save (err) ->
