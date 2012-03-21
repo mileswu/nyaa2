@@ -202,6 +202,13 @@ exports.show = (req, res) ->
     else
       res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
 
+exports.categories_json = (req, res) ->
+  output = {}
+  output[cat] = cat for cat, p of Categories.categories
+  if req.query.selected
+    output["selected"] = req.query.selected
+  res.send JSON.stringify(output)
+
 exports.edit = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
@@ -213,7 +220,11 @@ exports.edit = (req, res) ->
         doc.title = req.body.value
         doc.save (err) ->
           res.send doc.title
+      else if req.body.id == 'category'
+        doc.category = req.body.value
+        doc.save (err) ->
+          res.send doc.category
       else
-        res.send 'boo'
+        res.send 'Invalid request'
     else
-      res.send 'boo'
+      res.send 'Torrent not found'

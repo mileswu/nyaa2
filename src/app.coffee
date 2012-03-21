@@ -146,6 +146,7 @@ app.get '/torrent/:permalink', torrents.show
 app.get '/torrent/:permalink/download', torrents.download
 app.get '/torrent/:permalink/delete', torrents.delete
 app.post '/torrent/:permalink/edit', torrents.edit
+app.get '/categories_json', torrents.categories_json
 
 
 app.get '/register', users.register
