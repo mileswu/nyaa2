@@ -179,3 +179,23 @@ tr:nth-child(2n) {
 .delete {
   color: #9e0002;
 }
+
+span.editable {
+	display: inline-block;
+}
+
+span.editable:hover:not(.beingedited) {
+	padding-left: 10px;
+	margin-left: -10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	margin-top: -5px;
+	padding-bottom: 5px;
+	margin-bottom: -5px;
+	background-color: #ffffd3;
+}
+
+.editable textarea {
+	display: block;
+}
+

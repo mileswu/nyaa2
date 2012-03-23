@@ -1,14 +1,17 @@
 - if (!torrent)
   h2 This link is invalid
 - else
-  h2= torrent.title
+  h2
+    span(id='title')= torrent.title
   h3 Description
-  p= torrent.description
+  p
+    span(id='description')= torrent.description
   h3 Download
   p
     a(href=('/torrent/' + torrent.permalink + '/download')) Torrent (#{humanize_size(torrent.size)})
   h3 Category
-  p= torrent.category
+  p
+    span(id='category')= torrent.category
   h3 Uploaded
   p(title=torrent.dateUploaded) #{humanize_date(torrent.dateUploaded)} 
     - if (torrent.uploader === undefined)
