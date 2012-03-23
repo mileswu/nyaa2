@@ -142,7 +142,7 @@ exports.upload_post = (req, res) ->
 exports.delete = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
-      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
+      if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
         doc.remove()
         req.flash 'info', "Your torrent was successfully deleted"
         res.redirect '/'
@@ -198,7 +198,7 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
+        if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
           res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
         else
           res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title}
@@ -216,7 +216,7 @@ exports.edit = (req, res) ->
   #perhaps send proper error codes, but then dunno how to do AJAX end
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
-      if req.session.admin == true or (doc.uploader != undefined and doc.uploader == req.session.user.name)
+      if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
       else
         res.send 'Not authorized to do this'
         return
