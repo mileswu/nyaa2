@@ -61,17 +61,17 @@ app.helpers
     size /= 1024
     
     if size < 1024
-      return size.toFixed(0) + ' KB'
+      return size.toFixed(0) + ' KiB'
     size /= 1024
 
     if size < 1024
-      return size.toFixed(1) + ' MB'
+      return size.toFixed(1) + ' MiB'
     size /= 1024
     
     if size < 1024
-      return size.toFixed(1) + ' GB'
+      return size.toFixed(1) + ' GiB'
     size /= 1024
-    return size.toFixed(2) + ' TB'
+    return size.toFixed(2) + ' TiB'
 
   humanize_date: (date) ->
     now = new Date
