@@ -257,6 +257,6 @@ class Tracker
           j+=2
         return simple_response res, {files}
 
-port = parseInt(process.argv[2]) || 9002
+port = parseInt(process.argv[2]) || 9001
 console.log ('Starting tracker on 127.0.0.1:' + port + '...')
 new Tracker port
