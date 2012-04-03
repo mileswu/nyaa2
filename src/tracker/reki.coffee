@@ -84,6 +84,12 @@ decodeURLtoHex = (str) ->
       output += (str.charCodeAt i).toString 16
   return output.toLowerCase()
 
+HextoDec = (str) ->
+  output = ''
+  for i in [0..str.length-1] by 2
+    output += String.fromCharCode parseInt str[i] + str[i+1], 16
+  return output
+
 # Tracker class
 class Tracker
   constructor: (port) ->
@@ -106,6 +112,11 @@ class Tracker
       if req.url.substr(0, 9) is '/announce'
         if query = req.url.split('?', 2)[1]
           @announce query, req, res
+        else
+          res.end '!?'
+      else if req.url.substr(0, 7) is '/scrape'
+        if query = req.url.split('?', 2)[1]
+          @scrape query, req, res
         else
           res.end '!?'
       else
@@ -212,6 +223,40 @@ class Tracker
             'min interval' : MIN_INTERVAL
             'peers'        : peerlist
 
-port = parseInt(process.argv[2]) || 9001
+  scrape: (query, req, res) ->
+    info_hashes = []
+    for kvp in query.split '&'
+      if kvp[0...9] is "info_hash"
+        info_hashes.push decodeURLtoHex kvp[10...]
+    
+    # Require at least one info_hash and don't support sitewide scraping.
+    return simple_response res, {'failure reason': 'Invalid Request'} if info_hashes.length == 0
+
+    multi = @redis.multi()
+    files = {}
+    @torrents.find({ 'infohash' : {$in:info_hashes} }).toArray (err, docs) =>
+      infohash = []
+      snatches = [] # downloaded 
+      for i in [0...docs.length]
+        ih = docs[i].infohash
+        infohash.push ih
+        key = 'torrent:' + ih 
+        snatches.push docs[i].snatches
+        multi
+          .ZCARD(key + ':peers') # incomplete
+          .ZCARD(key + ':seeds') # complete
+        #console.log infohash + ': ' + docs[i].snatches
+      multi.exec (err, reply) -> # no real error checking here because the hashes returned by mongo should all be valid.
+        j = 0
+        for hash,i in infohash
+          conv = HextoDec hash
+          files[conv] = {}
+          files[conv].downloaded = snatches[i]
+          files[conv].incomplete = reply[j]
+          files[conv].complete = reply[j+1]
+          j+=2
+        return simple_response res, {files}
+
+port = parseInt(process.argv[2]) || 9002
 console.log ('Starting tracker on 127.0.0.1:' + port + '...')
 new Tracker port
