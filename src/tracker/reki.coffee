@@ -229,23 +229,24 @@ class Tracker
       if kvp[0...9] is "info_hash"
         info_hashes.push decodeURLtoHex kvp[10...]
     
-    # Require at least one info_hash and don't support sitewide scraping.
+    # Require at least one info_hash; no support for sitewide scraping.
     return simple_response res, {'failure reason': 'Invalid Request'} if info_hashes.length == 0
 
     multi = @redis.multi()
     files = {}
     @torrents.find({ 'infohash' : {$in:info_hashes} }).toArray (err, docs) =>
+      return simple_response res, {'failure reason': 'No valid hashes requested'} if docs.length is 0
       infohash = []
       snatches = [] # downloaded 
-      for i in [0...docs.length]
+      for i in [0...docs.length] # not sure why but docs.length-1 skips the last item
         ih = docs[i].infohash
-        infohash.push ih
         key = 'torrent:' + ih 
+        infohash.push ih
         snatches.push docs[i].snatches
         multi
           .ZCARD(key + ':peers') # incomplete
           .ZCARD(key + ':seeds') # complete
-        #console.log infohash + ': ' + docs[i].snatches
+      
       multi.exec (err, reply) -> # no real error checking here because the hashes returned by mongo should all be valid.
         j = 0
         for hash,i in infohash
