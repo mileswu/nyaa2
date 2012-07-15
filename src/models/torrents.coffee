@@ -31,7 +31,7 @@ DROP_COUNT = 3
 ANNOUNCE_INTERVAL = 300
 
 Torrent.statics.findTorrents = (q, callback) ->
-  q.only ['title', 'size', 'dateUploaded', 'category', 'permalink', 'snatches', 'infohash']
+  q.select { title : 1, size : 1, dateUploaded : 1, category : 1, permalink : 1, snatches : 1, infohash :1 }, { _id : 0 }
   q.sort 'dateUploaded', -1
   q.exec (err, docs) ->
     multi = redis.multi()
