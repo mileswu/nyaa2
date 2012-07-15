@@ -4,7 +4,6 @@
 
 require 'coffee-script'
 express = require 'express'
-form = require 'connect-form'
 util = require 'util'
 qs = require 'querystring'
 RedisStore = require('connect-redis')(express);
@@ -25,7 +24,6 @@ app.configure ->
   app.use express.methodOverride()
   app.use express.cookieParser()
   app.use express.session {secret: 'himitsu', store: new RedisStore}
-  app.use form {keepExtensions: true}
   app.use app.router
   app.use express.static __dirname + '/public'
 
@@ -39,6 +37,8 @@ app.configure 'production', ->
   app.use express.errorHandler()
   port = 9000
 
+if process.argv[2] # manual port override
+  port = process.argv[2]
 # Load
 
 torrents = require './controllers/torrents'
@@ -181,5 +181,4 @@ app.post '/admin/meta-category_edit', isAdmin, admin.meta_category_edit_post
 # Listen
 
 app.listen port
-console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env
-
+console.log "Express server listening on port %d in %s mode", port, app.settings.env
