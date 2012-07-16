@@ -3,6 +3,7 @@ bencode = require '../../lib/bencode'
 crypto = require 'crypto'
 http = require 'http'
 url = require 'url'
+md = require('markdown').markdown
 
 DROP_COUNT = 3
 ANNOUNCE_INTERVAL = 300
@@ -90,19 +91,22 @@ exports.upload_post = (req, res) ->
             }
   
           torrent = new Torrent {
-            'infohash' : infohash,
-            'size'     : size,
-            'title'    : title,
-            'files'    : torrentFiles,
+            'infohash'    : infohash,
+            'size'        : size,
+            'title'       : title,
+            'files'       : torrentFiles,
             'description' : fields.description,
-            'category' : fields.category,
+            'markuplang'  : fields.markuplang
+            'category'    : fields.category,
             'dateUploaded': new Date
           }
           if req.session.user
             torrent.uploader = req.session.user.name
           if fields.useexternaltracker
             torrent.external_tracker = torrentInfo.announce
-  
+          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description), (err, data) ->
+            console.log err
+            console.log data
           torrent.generatePermalink (err) ->
             torrent.save (err) ->
               fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
@@ -147,8 +151,6 @@ exports.delete = (req, res) ->
         res.send 'Not authorized to do this', 400
     else
       res.send 'This torrent does not exist', 404
-			
-  
 
 exports.download = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
@@ -183,6 +185,7 @@ exports.show = (req, res) ->
       t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
       key_seed = 'torrent:' + doc.infohash + ':seeds'
       key_peer = 'torrent:' + doc.infohash + ':peers'
+      key_desc = 'torrent:' + doc.infohash + ':desc'
       multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
       multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
       multi.ZCARD key_peer
@@ -192,10 +195,17 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
-          res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
-        else
-          res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title}
+        redis.GET key_desc, (err, data) -> # not part of the multi because that does weird things with arrays
+          if data == null # this is probably completely unnecessary
+            conv = md.toHTML doc.description
+            redis.SET key_desc, conv
+            doc.convdesc = conv
+          else
+            doc.convdesc = data
+          if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
+            res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title, 'js' : ['torrent_show.js']}
+          else
+            res.render 'torrents/torrent', {'torrent': doc, 'title' : 'Showing ' + doc.title}
     else
       res.render 'torrents/torrent', {'torrent': null, 'title' : 'Invalid link' }
 
@@ -205,6 +215,10 @@ exports.categories_json = (req, res) ->
   if req.query.selected
     output["selected"] = req.query.selected
   res.send JSON.stringify(output)
+
+exports.getmarkup = (req, res) ->
+  Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
+    res.send doc.description
 
 exports.edit = (req, res) ->
   #perhaps send proper error codes, but then dunno how to do AJAX end
@@ -216,9 +230,11 @@ exports.edit = (req, res) ->
         return
 
       if req.body.id == 'description'
-        doc.description = req.body.value
-        doc.save (err) ->
-          res.send doc.description
+        conv = md.toHTML req.body.value
+        redis.SET 'torrent:'+doc.infohash+':desc', conv, (err, data) ->
+          doc.description = req.body.value
+          doc.save (err) ->
+            res.send conv
       else if req.body.id == 'title'
         doc.title = req.body.value
         doc.save (err) ->

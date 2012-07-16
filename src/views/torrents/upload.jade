@@ -22,6 +22,6 @@ form(id='upload-form', method='post', enctype='multipart/form-data')
     li
       label(for='upload-description') Description
       textarea(id='upload-description', name='description', rows='4', cols='40')
+      input(type='hidden', name='markuplang', value='markdown')
     li
       input(type='submit', value='Upload', id='upload-submit')
-

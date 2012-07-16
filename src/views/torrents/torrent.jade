@@ -4,8 +4,7 @@
   h2
     span(id='title')= torrent.title
   h3 Description
-  p
-    span(id='description')= torrent.description
+  span(id='description') !{torrent.convdesc}
   h3 Download
   p
     a(href=('/torrent/' + torrent.permalink + '/download')) Torrent (#{humanize_size(torrent.size)})

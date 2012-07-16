@@ -6,19 +6,22 @@ $(document).ready(function() {
     submit    : 'Save',
 		onblur    : 'ignore'
 	};
-	var empty = {}
-	$('#description').editable(url, $.extend(empty, options, {'type':'textarea', 'cols': 50, 'rows': 5}));
-	var empty = {}
-	$('#title').editable(url, $.extend(empty,options, {'width': 450}));
-	
+	$('#description').editable(url, $.extend({}, options, {
+		'type':'textarea',
+		'cols': 50,
+		'rows': 5,
+		'loadurl': window.location.pathname + '/getmarkup'}));
+
+	$('#title').editable(url, $.extend({}, options, {'width': 450}));
 	
 	loaddatafn = function (r, s){
 		return { selected: r }
 	}
 
-	$('#category').editable(url, $.extend(options, {'type':'select',
-		loaddata: loaddatafn,
-		loadurl: "/categories_json"
+	$('#category').editable(url, $.extend({}, options, {
+		'type':'select',
+		'loaddata': loaddatafn,
+		'loadurl': "/categories_json"
 	}));
 
 	$('#description, #title, #category').addClass('editable');
