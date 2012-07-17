@@ -144,6 +144,8 @@ exports.delete = (req, res) ->
   Torrent.findOne {'permalink' : req.params.permalink}, (err, doc) ->
     if doc
       if req.session.admin == true or (doc.uploader != undefined and req.session.user and doc.uploader == req.session.user.name)
+        key = 'torrent:'+doc.infohash
+        redis.DEL key+':seeds', key+':peers', key+':desc'
         doc.remove()
         req.flash 'info', "Your torrent was successfully deleted"
         res.redirect '/'
@@ -185,7 +187,6 @@ exports.show = (req, res) ->
       t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
       key_seed = 'torrent:' + doc.infohash + ':seeds'
       key_peer = 'torrent:' + doc.infohash + ':peers'
-      key_desc = 'torrent:' + doc.infohash + ':desc'
       multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
       multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
       multi.ZCARD key_peer
@@ -195,7 +196,7 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        redis.GET key_desc, (err, data) -> # not part of the multi because that does weird things with arrays
+        redis.GET 'torrent:' + doc.infohash + ':desc', (err, data) -> # not part of the multi because that does weird things with arrays
           if data == null # this is probably completely unnecessary
             conv = md.toHTML doc.description
             redis.SET key_desc, conv
