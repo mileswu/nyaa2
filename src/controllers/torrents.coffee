@@ -4,6 +4,44 @@ crypto = require 'crypto'
 http = require 'http'
 url = require 'url'
 md = require('markdown').markdown
+RSS = require 'rss'
+
+# data structure: sorted set -> key: 'rss', score: 'dateUploaded', member 'rss:@infohash'
+#                 Hash       -> key: 'rss:infohash', title: @title, url: @permalink, ...
+# On torrent creation, add it to the sorted set. Whenever torrent is uploaded or edited,
+# modify the hash. Prune the sorted set when new torrents are uploaded or removed, and
+# regenerate and cache the xml whenever the actual rss feed is requested.
+
+feed = new RSS {
+  title       : 'uguu~tracker',
+  description : 'RSS'
+  feed_url    : '/rss'
+  site_url    : '/'
+}
+
+feed.generate = (callback) ->
+  feed.items = []
+  redis.ZREVRANGE 'rss', 0, 49, (err, data) ->
+    multi = redis.multi()
+    for key in data
+      multi.HGETALL key
+    multi.exec (err, hdata) ->
+      for entry in hdata
+        feed.item entry
+      console.log feed
+      conv = feed.xml()
+      redis.SET 'rss:xml', conv, (err, data) ->
+        callback(conv)
+
+exports.rss = (req, res) ->
+	redis.GET 'rss:xml', (err, data) ->
+		if data == null
+			feed.generate (xml) ->
+				res.contentType 'application/rss+xml'
+				res.send xml
+		else
+			res.contentType 'text/xml'
+			res.send data
 
 DROP_COUNT = 3
 ANNOUNCE_INTERVAL = 300
@@ -229,12 +267,12 @@ exports.edit = (req, res) ->
       else
         res.send 'Not authorized to do this'
         return
-
+      
       if req.body.id == 'description'
-        conv = md.toHTML req.body.value
-        redis.SET 'torrent:'+doc.infohash+':desc', conv, (err, data) ->
-          doc.description = req.body.value
-          doc.save (err) ->
+        doc.description = req.body.value
+        doc.save (err) ->
+          conv = md.toHTML req.body.value
+          redis.SET 'torrent:'+doc.infohash+':desc', conv, (err, data) ->
             res.send conv
       else if req.body.id == 'title'
         doc.title = req.body.value

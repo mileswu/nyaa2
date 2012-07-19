@@ -1,21 +1,34 @@
 #!/usr/bin/env coffee
 
 # Module dependencies.
-
 require 'coffee-script'
 express = require 'express'
 util = require 'util'
 qs = require 'querystring'
 RedisStore = require('connect-redis')(express);
 
+#Create express server
 app = module.exports = express.createServer()
 
+#Globals
 global.mongoose = require 'mongoose'
-
 global.redis = require('redis').createClient 6379, '127.0.0.1' #, {'return_buffers' : true})
+global.humanize_s = (size) -> # make global so we can use it in the Torrent schema (this is probably a bad way to do this)
+  if size < 1024
+    return size + ' B'
+  size /= 1024
+  if size < 1024
+    return size.toFixed(0) + ' KiB'
+  size /= 1024
+  if size < 1024
+    return size.toFixed(1) + ' MiB'
+  size /= 1024
+  if size < 1024
+    return size.toFixed(1) + ' GiB'
+  size /= 1024
+  return size.toFixed(2) + ' TiB'
 
 # Configuration
-
 app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
@@ -47,7 +60,6 @@ admin = require './controllers/admin'
 Categories = require './models/categories'
 
 # Helpers
-
 app.dynamicHelpers
   req: (req, res) -> return req
   categories: (req, res) -> return Categories.categories
@@ -55,23 +67,7 @@ app.dynamicHelpers
   meta_categories: (req, res) -> return Categories.meta_categories
 
 app.helpers
-  humanize_size: (size) ->
-    if size < 1024
-      return size + ' B'
-    size /= 1024
-    
-    if size < 1024
-      return size.toFixed(0) + ' KiB'
-    size /= 1024
-
-    if size < 1024
-      return size.toFixed(1) + ' MiB'
-    size /= 1024
-    
-    if size < 1024
-      return size.toFixed(1) + ' GiB'
-    size /= 1024
-    return size.toFixed(2) + ' TiB'
+  humanize_size: humanize_s
 
   humanize_date: (date) ->
     now = new Date
@@ -133,10 +129,8 @@ app.helpers
       pagestr += "<a href=\"#{make_url lastpage}\">Last &rArr;</a>"
     
     "<div class=\"pagination\">#{pagestr}</div>"
-    
 
 # Routes
-
 app.get '/', torrents.list
 
 app.get '/upload', torrents.upload
@@ -148,6 +142,8 @@ app.get '/torrent/:permalink/delete', torrents.delete
 app.post '/torrent/:permalink/edit', torrents.edit
 app.get '/categories_json', torrents.categories_json
 app.get '/torrent/:permalink/getmarkup', torrents.getmarkup
+
+app.get '/rss', torrents.rss
 
 app.get '/register', users.register
 app.post '/register', users.register_post

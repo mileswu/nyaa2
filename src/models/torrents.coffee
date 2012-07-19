@@ -69,5 +69,29 @@ Torrent.method 'generatePermalink', (callback) ->
         callback ''
   checkFunc baseurl, 0
 
+Torrent.pre 'save', (next) ->
+	multi = redis.multi()
+	id = 'rss:' + @infohash
+	multi.HMSET id, { # create/modify the redis hash for the torrent
+		title:	@title,
+		description: 'Size: ' + humanize_s(@size), # any other info to include?
+		url: '/torrent/'+@permalink+'/download', # link to the item
+		guid: @infohash, # optional - defaults to url
+		author: @uploader, # optional - defaults to feed author property
+		date: @dateUploaded # any format that js Date can parse.
+	}
+	multi.DEL 'rss:xml' # delete cached rss xml
+	multi.ZADD 'rss', @dateUploaded.valueOf(), id # sorted set score must be a number
+	multi.exec (err, data) ->
+		next()
+
+Torrent.pre 'remove', (next) ->
+	# some rss command here
+	multi = redis.multi()
+	multi.DEL 'rss:'+@infohash, 'rss:xml'
+	multi.ZREM 'rss', 'rss:'+@infohash
+	multi.exec (err, data) ->
+		next()
+
 module.exports = mongoose.model 'Torrent', Torrent
 
