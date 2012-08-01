@@ -177,7 +177,8 @@ class Tracker
         .ZREMRANGEBYSCORE(key_peer, 0, t - ANNOUNCE_INTERVAL * DROP_COUNT *1000)
       
       ip = get_vars['ip'] #REALLY SHOULD CHECK THIS IS A VALID IP
-      ip = req.client.remoteAddress if !ip?
+      ip = req.connection.remoteAddress if !ip?
+      return if !ip?
       #ip = process.env['HTTP_X_REAL_IP'] if ip is '127.0.0.1'
       
       peer_entry = { 'ip' : ip, 'port' : port, 'peer_id' : get_vars['peer_id'], 'compacted' : compact(ip, port) }
