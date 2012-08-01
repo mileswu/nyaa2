@@ -143,12 +143,12 @@ exports.upload_post = (req, res) ->
             torrent.uploader = req.session.user.name
           if fields.useexternaltracker
             torrent.external_tracker = torrentInfo.announce
-          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description)
-          torrent.generatePermalink (err) ->
-            torrent.save (err) ->
-              fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
-                fs.unlink f_path, (err) ->
-                  res.redirect ('/torrent/' + torrent.permalink)
+          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description), (err, data) ->
+            torrent.generatePermalink (err) ->
+              torrent.save (err) ->
+                fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
+                  fs.unlink f_path, (err) ->
+                    res.redirect ('/torrent/' + torrent.permalink)
 
   if files.torrent.size > 0
     process_file files.torrent.path
@@ -232,7 +232,8 @@ exports.show = (req, res) ->
         replies.shift()
         doc.peers = replies.shift()
         doc.seeds = replies.shift()
-        redis.GET 'torrent:' + doc.infohash + ':desc', (err, data) -> # not part of the multi because that does weird things with arrays
+        key_desc = 'torrent:'+doc.infohash+':desc'
+        redis.GET key_desc, (err, data) -> # not part of the multi because that does weird things with arrays
           if data == null # this is probably completely unnecessary
             conv = md.toHTML doc.description
             redis.SET key_desc, conv
