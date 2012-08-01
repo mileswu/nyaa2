@@ -31,7 +31,7 @@ DROP_COUNT = 3
 ANNOUNCE_INTERVAL = 300
 
 Torrent.statics.findTorrents = (q, callback) ->
-  q.select { title : 1, size : 1, dateUploaded : 1, category : 1, permalink : 1, snatches : 1, infohash :1 }, { _id : 0 }
+  q.select { title : 1, size : 1, dateUploaded : 1, category : 1, permalink : 1, snatches : 1, infohash : 1 }, { _id : 0 }
   q.sort 'dateUploaded', -1
   q.exec (err, docs) ->
     multi = redis.multi()
@@ -70,27 +70,12 @@ Torrent.method 'generatePermalink', (callback) ->
   checkFunc baseurl, 0
 
 Torrent.pre 'save', (next) ->
-	multi = redis.multi()
-	id = 'rss:' + @infohash
-	multi.HMSET id, { # create/modify the redis hash for the torrent
-		title:	@title,
-		description: 'Size: ' + humanize_s(@size), # any other info to include?
-		url: site_url+'/torrent/'+@permalink+'/download', # link to the item
-		guid: @infohash, # optional - defaults to url
-		author: @uploader, # optional - defaults to feed author property
-		date: @dateUploaded # any format that js Date can parse.
-	}
-	multi.DEL 'rss:xml' # delete cached rss xml
-	multi.exec (err, data) ->
-		next()
+  redis.DEL 'rss:xml', (err, data) -> # delete cached rss xml
+    next()
 
 Torrent.pre 'remove', (next) ->
-	# some rss command here
-	multi = redis.multi()
-	multi.DEL 'rss:'+@infohash, 'rss:xml'
-	multi.ZREM 'rss', 'rss:'+@infohash
-	multi.exec (err, data) ->
-		next()
+  redis.DEL 'rss:xml', (err, data) ->
+    next()
 
 module.exports = mongoose.model 'Torrent', Torrent
 

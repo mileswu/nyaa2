@@ -6,12 +6,6 @@ url = require 'url'
 md = require('markdown').markdown
 RSS = require 'rss'
 
-# data structure: sorted set -> key: 'rss', score: 'dateUploaded', member 'rss:@infohash'
-#                 Hash       -> key: 'rss:infohash', title: @title, url: @permalink, ...
-# On torrent creation, add it to the sorted set. Whenever torrent is uploaded or edited,
-# modify the hash. Prune the sorted set when new torrents are uploaded or removed, and
-# regenerate and cache the xml whenever the actual rss feed is requested.
-
 feed = new RSS {
   title       : 'uguu~tracker',
   description : 'RSS'
@@ -21,26 +15,33 @@ feed = new RSS {
 
 feed.generate = (callback) ->
   feed.items = []
-  redis.ZREVRANGE 'rss', 0, 49, (err, data) ->
-    multi = redis.multi()
-    for key in data
-      multi.HGETALL key
-    multi.exec (err, hdata) ->
-      for entry in hdata
-        feed.item entry
-      conv = feed.xml()
-      redis.SET 'rss:xml', conv, (err, data) ->
-        callback(conv) # send response before cleaning up the ordered set
-        redis.ZREMRANGEBYRANK 'rss', 0, -60 # keep at most 60 items in the rss ordered set
+  query = Torrent.find {}
+  query.limit 50
+  query.select { title : 1, size : 1, dateUploaded : 1, category : 1, permalink : 1, uploader : 1}, { _id : 0 }
+  query.sort 'dateUploaded', -1
+  query.exec (err, docs) ->
+    for torrent in docs
+      if torrent.author == undefined
+        torrent.author = "Anonymous"
+      entry = {
+        title      : torrent.title,
+        description: 'Size: '+humanize_s(torrent.size),
+        url        : site_url+'/torrent/'+torrent.permalink+'/download',
+        author     : torrent.author,
+        date       : torrent.date
+      }
+      feed.item entry
+    conv = feed.xml()
+    redis.SET 'rss:xml', conv, (err, data) ->
+      callback(conv) # send response before cleaning up the ordered set
 
 exports.rss = (req, res) ->
   redis.GET 'rss:xml', (err, data) ->
+    res.contentType 'application/rss+xml'
     if data == null
       feed.generate (xml) ->
-        res.contentType 'application/rss+xml'
         res.send xml
     else
-      res.contentType 'text/xml'
       res.send data
 
 DROP_COUNT = 3
@@ -145,10 +146,9 @@ exports.upload_post = (req, res) ->
           redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description)
           torrent.generatePermalink (err) ->
             torrent.save (err) ->
-              redis.ZADD 'rss', torrent.dateUploaded.valueOf(), 'rss:'+torrent.infohash, (err, data) ->
-                fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
-                  fs.unlink f_path, (err) ->
-                    res.redirect ('/torrent/' + torrent.permalink)
+              fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
+                fs.unlink f_path, (err) ->
+                  res.redirect ('/torrent/' + torrent.permalink)
 
   if files.torrent.size > 0
     process_file files.torrent.path
