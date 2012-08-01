@@ -1,27 +1,46 @@
-h2 Upload a torrent
+h2(id="upload-title") Upload a torrent
 
 form(id='upload-form', method='post', enctype='multipart/form-data')
-  ul
-    li
-      label(for='upload-file') File
-      input(type='file', name='torrent', id='upload-file')
-    li
-      label(for='upload-url') URL
-      input(name='torrenturl', id='upload-url', size='40')
-    //-li
+    div
+      .right
+        label(for='upload-file') File
+      .left
+        input(type='file', name='torrent', id='upload-file')
+    div
+      .right
+        p
+      .left
+        label - or -
+    div
+      .right
+        label(for='upload-url') URL
+      .left
+        input(name='torrenturl', id='upload-url', size='40')
+    //-div
       label(for='upload-external') Use External Tracker already in torrent
       input(name='useexternaltracker', id='upload-external', type='checkbox')
-    li
-      label(for='upload-title') Title (optional)
-      input(name='title', id='upload-title', size='50')
-    li
-      label(for='upload-category') Category
-      select(name='category', id='upload-category')
-        - each cat_options, category in categories
-          option(value=category)= category
-    li
-      label(for='upload-description') Description
-      textarea(id='upload-description', name='description', rows='4', cols='40')
-      input(type='hidden', name='markuplang', value='markdown')
-    li
-      input(type='submit', value='Upload', id='upload-submit')
+    div
+      .right
+        label(for='upload-title') Title (optional)
+      .left
+        input(name='title', id='upload-title', size='50')
+    div
+      .right
+        label(for='upload-category') Category
+      .left
+        select(name='category', id='upload-category')
+          - each cat_options, category in categories
+            option(value=category)= category
+    div
+      .right
+        label(for='upload-description') Description<br />
+          .small
+            | Parses 
+            a(href='http://daringfireball.net/projects/markdown/') markdown
+            |  syntax
+      .left
+        textarea(id='upload-description', name='description', rows='4', cols='40')
+        input(type='hidden', name='markuplang', value='markdown')
+    div
+      #submit
+        input(type='submit', value='Upload', id='upload-submit')
