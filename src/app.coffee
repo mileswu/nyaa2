@@ -11,6 +11,7 @@ RedisStore = require('connect-redis')(express);
 app = module.exports = express.createServer()
 
 #Globals
+global.site_url = "" # this should probably not be a global variable
 global.mongoose = require 'mongoose'
 global.redis = require('redis').createClient 6379, '127.0.0.1' #, {'return_buffers' : true})
 global.humanize_s = (size) -> # make global so we can use it in the Torrent schema (this is probably a bad way to do this)
@@ -50,8 +51,8 @@ app.configure 'production', ->
   app.use express.errorHandler()
   port = 9000
 
-if process.argv[2] # manual port override
-  port = process.argv[2]
+if process.argv[2]
+  global.site_url = process.argv[2]
 # Load
 
 torrents = require './controllers/torrents'

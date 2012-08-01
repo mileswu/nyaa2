@@ -75,7 +75,7 @@ Torrent.pre 'save', (next) ->
 	multi.HMSET id, { # create/modify the redis hash for the torrent
 		title:	@title,
 		description: 'Size: ' + humanize_s(@size), # any other info to include?
-		url: '/torrent/'+@permalink+'/download', # link to the item
+		url: site_url+'/torrent/'+@permalink+'/download', # link to the item
 		guid: @infohash, # optional - defaults to url
 		author: @uploader, # optional - defaults to feed author property
 		date: @dateUploaded # any format that js Date can parse.

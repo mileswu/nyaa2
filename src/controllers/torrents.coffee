@@ -28,7 +28,6 @@ feed.generate = (callback) ->
     multi.exec (err, hdata) ->
       for entry in hdata
         feed.item entry
-      console.log feed
       conv = feed.xml()
       redis.SET 'rss:xml', conv, (err, data) ->
         callback(conv) # send response before cleaning up the ordered set
@@ -143,18 +142,15 @@ exports.upload_post = (req, res) ->
             torrent.uploader = req.session.user.name
           if fields.useexternaltracker
             torrent.external_tracker = torrentInfo.announce
-          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description), (err, data) ->
-            console.log err
-            console.log data
+          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description)
           torrent.generatePermalink (err) ->
             torrent.save (err) ->
-              redis.ZADD 'rss', @dateUploaded.valueOf(), id, (err, data) ->
+              redis.ZADD 'rss', torrent.dateUploaded.valueOf(), 'rss:'+torrent.infohash, (err, data) ->
                 fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
                   fs.unlink f_path, (err) ->
                     res.redirect ('/torrent/' + torrent.permalink)
 
   if files.torrent.size > 0
-    console.log "bad things are happening"
     process_file files.torrent.path
   else if fields.torrenturl
     h_url = url.parse fields.torrenturl
