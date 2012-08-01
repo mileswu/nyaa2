@@ -76,12 +76,14 @@ bencode = (o) ->
 
 decodeURLtoHex = (str) ->
   output = ''
-  for i in [0..str.length-1]
+  i = 0
+  while i < str.length
     if (str.charCodeAt i)== 37
       output += str[i+1] + str[i+2]
       i += 2
     else
       output += (str.charCodeAt i).toString 16
+    i += 1
   return output.toLowerCase()
 
 HextoDec = (str) ->
