@@ -1,19 +1,28 @@
-h1= title
+h1(class='title')= title
 
 form#registration-form(method='POST')
-  ul
-    li
-      label(for='register-username') User name:
+  div
+    .right
+      label(for='register-username') User name
+    .left
       input(type='text', name='username', id='register-username', value='')
-    li
-      label(for='register-password-1') Password:
+  div
+    .right
+      label(for='register-password-1') Password
+    .left
       input(type='password', name='password1', id='register-password-1')
-    li
-      label(for='register-password-2') Confirm Password:
+  div
+    .right
+      label(for='register-password-2') Confirm Password
+    .left
       input(type='password', name='password2', id='register-password-2')
-    li
-      label(for='register-email') (optional) Email:
+  div
+    .right
+      label(for='register-email') Email Address
+        .small
+          | optional
+    .left
       input(type='text', name='email', id='register-email', value='')
-    li
-      input(type='submit', value="Register")
+  div
+    input(type='submit', value="Register")
 

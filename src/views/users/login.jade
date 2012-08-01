@@ -1,16 +1,18 @@
-h1= title
+h1(class='title')= title
 
 form#login-form(method='POST')
-  ul
-    li
-      label(for='login-username') User name:
+  div
+    .right
+      label(for='login-username') User name
+    .left
       input(type='text', name='username', id='login-username', value='')
-    li
-      label(for='login-password') Password:
+  div
+    .right
+      label(for='login-password') Password
+    .left
       input(type='password', name='password', id='login-password')
-    li
-      input(type='submit', value="Login")
-    li
-      p No Account? 
-        a(href='/register') Register.
-
+  div
+    input(type='submit', value="Login")
+  div
+    p No Account? 
+      a(href='/register') Register.
