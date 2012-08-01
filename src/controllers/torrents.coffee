@@ -25,7 +25,7 @@ feed.generate = (callback) ->
         torrent.author = "Anonymous"
       entry = {
         title      : torrent.title,
-        description: 'Size: '+humanize_s(torrent.size),
+        description: 'Size: '+humanize_s(torrent.size)+' - Category: '+torrent.category,
         url        : site_url+'/torrent/'+torrent.permalink+'/download',
         author     : torrent.author,
         date       : torrent.date
