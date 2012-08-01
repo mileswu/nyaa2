@@ -31,17 +31,18 @@ feed.generate = (callback) ->
       console.log feed
       conv = feed.xml()
       redis.SET 'rss:xml', conv, (err, data) ->
-        callback(conv)
+        callback(conv) # send response before cleaning up the ordered set
+        redis.ZREMRANGEBYRANK 'rss', 0, -60 # keep at most 60 items in the rss ordered set
 
 exports.rss = (req, res) ->
-	redis.GET 'rss:xml', (err, data) ->
-		if data == null
-			feed.generate (xml) ->
-				res.contentType 'application/rss+xml'
-				res.send xml
-		else
-			res.contentType 'text/xml'
-			res.send data
+  redis.GET 'rss:xml', (err, data) ->
+    if data == null
+      feed.generate (xml) ->
+        res.contentType 'application/rss+xml'
+        res.send xml
+    else
+      res.contentType 'text/xml'
+      res.send data
 
 DROP_COUNT = 3
 ANNOUNCE_INTERVAL = 300
@@ -147,9 +148,10 @@ exports.upload_post = (req, res) ->
             console.log data
           torrent.generatePermalink (err) ->
             torrent.save (err) ->
-              fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
-                fs.unlink f_path, (err) ->
-                  res.redirect ('/torrent/' + torrent.permalink)
+              redis.ZADD 'rss', @dateUploaded.valueOf(), id, (err, data) ->
+                fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
+                  fs.unlink f_path, (err) ->
+                    res.redirect ('/torrent/' + torrent.permalink)
 
   if files.torrent.size > 0
     console.log "bad things are happening"

@@ -81,7 +81,6 @@ Torrent.pre 'save', (next) ->
 		date: @dateUploaded # any format that js Date can parse.
 	}
 	multi.DEL 'rss:xml' # delete cached rss xml
-	multi.ZADD 'rss', @dateUploaded.valueOf(), id # sorted set score must be a number
 	multi.exec (err, data) ->
 		next()
 
