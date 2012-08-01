@@ -34,6 +34,7 @@ html
             - else
               li: a(href='/login') Login
             li: a(href='/upload') Upload
+            li: a(href='/rss') RSS
             li
               form(action='/')
                 select(name='searchcategory')
@@ -41,6 +42,7 @@ html
                     option(value=category)= category
                 input(name='searchtext', value=req.query.searchtext, size='30')
                 //-input(type='submit', value='Search')
+    #subheader
     #content
       - var flash = req.flash()
       - if (flash.error)
@@ -48,10 +50,11 @@ html
       - if (flash.info)
         #flash.info= flash.info
       !{body}
+
     #footer
-      p The uguu~tracker is in heavy day-to-day development (
+      p The uguu~tracker is still under development (
         a(href='https://github.com/mileswu/nyaa2') repo
         |  on Github). Any bugs or requests can be filed 
         a(href='https://github.com/mileswu/nyaa2/issues/new') here
-        |  or with delamoo at #uguu~subs on rizon IRC.
+        |  or with delamoo or torque at #uguu~subs on rizon IRC.
       p None of the files linked here are actually hosted on this site. By downloading the files, you are claiming that you own the original. 
