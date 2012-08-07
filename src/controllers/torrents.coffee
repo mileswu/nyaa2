@@ -143,7 +143,7 @@ exports.upload_post = (req, res) ->
             torrent.uploader = req.session.user.name
           if fields.useexternaltracker
             torrent.external_tracker = torrentInfo.announce
-          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description), (err, data) ->
+          redis.SET 'torrent:'+infohash+':desc', md.toHTML(fields.description), (err, resdata) ->
             torrent.generatePermalink (err) ->
               torrent.save (err) ->
                 fs.writeFile (__dirname+'/../../torrents/' + infohash + '.torrent'), data, (err) ->
