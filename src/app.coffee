@@ -117,7 +117,7 @@ app.helpers
 
     if page != 1
       pagestr += "<a href=\"#{make_url 1}\">&lArr; First</a>"
-      pagestr += "<a href=\"#{make_url start - 1}\">&larr; Prev</a>"
+      pagestr += "<a href=\"#{make_url page - 1}\">&larr; Prev</a>"
     
     for i in [start..end] by 1
       if i isnt page
