@@ -34,24 +34,25 @@ Torrent.statics.findTorrents = (q, callback) ->
   q.select { title : 1, size : 1, dateUploaded : 1, category : 1, permalink : 1, snatches : 1, infohash : 1 }, { _id : 0 }
   q.sort 'dateUploaded', -1
   q.exec (err, docs) ->
-    multi = redis.multi()
-    t = Date.now()
-    t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
-    for doc in docs
-      key_seed = 'torrent:' + doc.infohash + ':seeds'
-      key_peer = 'torrent:' + doc.infohash + ':peers'
-      multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
-      multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
-      multi.ZCARD key_peer
-      multi.ZCARD key_seed
-
-    multi.exec (err, replies) ->
+    if docs isnt undefined
+      t_ago = t - ANNOUNCE_INTERVAL * DROP_COUNT * 1000
+      multi = redis.multi()
+      t = Date.now()
       for doc in docs
-        replies.shift()
-        replies.shift()
-        doc.peers = replies.shift()
-        doc.seeds = replies.shift()
-      callback(docs)
+        key_seed = 'torrent:' + doc.infohash + ':seeds'
+        key_peer = 'torrent:' + doc.infohash + ':peers'
+        multi.ZREMRANGEBYSCORE key_peer, 0, t_ago
+        multi.ZREMRANGEBYSCORE key_seed, 0, t_ago
+        multi.ZCARD key_peer
+        multi.ZCARD key_seed
+
+      multi.exec (err, replies) ->
+        for doc in docs
+          replies.shift()
+          replies.shift()
+          doc.peers = replies.shift()
+          doc.seeds = replies.shift()
+        callback(docs)
 
 Torrent.method 'generatePermalink', (callback) ->
   baseurl = @title.substring(0, 75).replace(`/ /g`, '_')
